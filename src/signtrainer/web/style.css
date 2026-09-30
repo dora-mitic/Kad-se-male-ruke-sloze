@@ -1,29 +1,32 @@
-/* Warm gold palette: #F9E6A8 cream, #F2A900 gold, #CC6F00 amber (subtitles),
-   #4D2A00 dark brown (text). Light is the default; the header button switches to dark. */
+/* "Med" (honey) palette: off-white background, gold as the main colour, warm
+   near-black text. Subtitles are gold on a dark box so they read from 2 m away.
+   Light is the default; the header button switches to dark. */
 :root {
-  --bg: #F9E6A8;
-  --panel: #4D2A00;
-  --text: #4D2A00;
-  --muted: #8A6630;
-  --gold: #F2A900;
-  --amber: #CC6F00;
-  --subtitle-text: var(--amber);
-  --subtitle-bg: rgba(255, 251, 239, 0.93);
-  --overlay-bg: rgba(249, 230, 168, 0.94);
-  --on-gold: #4D2A00;
+  --bg: #FFFDF8;
+  --panel: #2A2118;
+  --text: #2A2118;
+  --muted: #7D6E5D;
+  --gold: #EBA800;
+  --on-gold: #2A2118;
+  --subtitle-text: #F2B530;
+  --subtitle-bg: rgba(42, 33, 24, 0.9);
+  --card-bg: rgba(255, 253, 248, 0.9);
+  --overlay-bg: rgba(255, 253, 248, 0.94);
   --bad: #C62828;
-  --shadow: rgba(77, 42, 0, 0.25);
+  --shadow: rgba(42, 33, 24, 0.18);
 }
 
 :root[data-theme="dark"] {
-  --bg: #1C1000;
-  --panel: #2B1900;
-  --text: #F9E6A8;
-  --muted: #C9A86A;
-  --subtitle-text: var(--gold);
-  --subtitle-bg: rgba(28, 16, 0, 0.86);
-  --overlay-bg: rgba(28, 16, 0, 0.92);
-  --on-gold: #1C1000;
+  --bg: #16120D;
+  --panel: #221C15;
+  --text: #F7EBD8;
+  --muted: #B5A38A;
+  --gold: #F2B530;
+  --on-gold: #16120D;
+  --subtitle-text: #F2B530;
+  --subtitle-bg: rgba(14, 11, 7, 0.9);
+  --card-bg: rgba(14, 11, 7, 0.75);
+  --overlay-bg: rgba(22, 18, 13, 0.93);
   --bad: #FF6B5B;
   --shadow: rgba(0, 0, 0, 0.5);
 }
@@ -52,8 +55,7 @@ header, footer {
 }
 
 header {
-  border-bottom: 3px solid transparent;
-  border-image: linear-gradient(90deg, var(--gold), var(--amber)) 1;
+  border-bottom: 3px solid var(--gold);
 }
 
 h1 {
@@ -91,8 +93,10 @@ footer {
   transition: background 0.2s;
 }
 .pill-ok   { background: var(--gold); color: var(--on-gold); }
-.pill-wait { background: transparent; color: var(--amber); box-shadow: inset 0 0 0 2px var(--amber); }
+.pill-wait { background: transparent; color: var(--text); box-shadow: inset 0 0 0 2px var(--gold); }
 .pill-bad  { background: var(--bad); color: #fff; }
+.pill-anchor { background: var(--panel); color: var(--gold); }
+.pill[hidden] { display: none; }
 
 main {
   display: flex;
@@ -145,6 +149,7 @@ main {
   padding: 10px 26px;
   border-radius: 10px;
   background: var(--subtitle-bg);
+  border-bottom: 3px solid var(--gold);
   box-shadow: 0 4px 16px var(--shadow);
   font-size: clamp(1.6rem, 3.2vw, 3rem);
   font-weight: 700;
@@ -152,10 +157,10 @@ main {
   color: var(--subtitle-text);
 }
 .guess { font-size: 1.4em; }
-.guess small { font-size: 0.45em; margin-left: 0.6em; color: var(--muted); font-weight: 400; }
+.guess small { font-size: 0.45em; margin-left: 0.6em; color: #D8C7AE; font-weight: 400; }
 .guess-unsure { opacity: 0.5; }
 .subtitle-placeholder {
-  color: var(--muted);
+  color: #B5A38A;
   font-weight: 400;
   font-style: italic;
 }
@@ -168,7 +173,7 @@ main {
   width: clamp(120px, 16%, 220px);
   aspect-ratio: 1;
   border-radius: 14px;
-  background: var(--subtitle-bg);
+  background: var(--card-bg);
   border: 2px dashed var(--gold);
   display: flex;
   align-items: center;

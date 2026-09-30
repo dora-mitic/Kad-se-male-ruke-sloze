@@ -5,6 +5,15 @@ const messageEl = document.getElementById("message");
 const fpsEl = document.getElementById("fps");
 const videoEl = document.getElementById("video");
 const subtitleEl = document.getElementById("subtitle-text");
+const anchorEl = document.getElementById("anchor");
+
+const ANCHOR_LABELS = { forehead: "Ruka kod čela", chin: "Ruka kod brade", chest: "Ruka kod prsa" };
+
+function showAnchor(s) {
+  const label = ANCHOR_LABELS[s.near_anchor];
+  anchorEl.hidden = !label;
+  if (label) anchorEl.textContent = `📍 ${label}`;
+}
 
 // Until M3 adds smoothing and hold-to-confirm, the subtitle shows the raw guess.
 function showPrediction(s) {
@@ -54,6 +63,7 @@ async function poll() {
       showMessage("");
     }
     showPrediction(s);
+    showAnchor(s);
     fpsEl.textContent = s.fps ? `${Math.round(s.fps)} FPS` : "";
   } catch {
     setStatus("Server ne radi", "bad");

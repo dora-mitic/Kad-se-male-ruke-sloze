@@ -1,4 +1,4 @@
-"""Webcam capture and MediaPipe hand tracking, running in a background thread."""
+"""Webcam capture with MediaPipe hand and pose tracking, running in a background thread."""
 
 import threading
 import time
@@ -9,7 +9,7 @@ import mediapipe as mp
 import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
-from signtrainer import config
+from signtrainer import body, config
 from signtrainer.model import LETTERS_MODEL_PATH, LetterClassifier
 
 HAND_CONNECTIONS = [(c.start, c.end) for c in vision.HandLandmarksConnections.HAND_CONNECTIONS]
@@ -24,6 +24,8 @@ class HandFrame:
     frame_id: int = 0
     landmarks: np.ndarray | None = None  # (21, 3) in pixel units, or None
     handedness: str | None = None
+    pose: np.ndarray | None = None  # (33, 3) body landmarks in pixel units, or None
+    near_anchor: str | None = None  # "forehead" / "chin" / "chest" if a fingertip is there
     prediction: str | None = None  # raw per-frame guess, no smoothing yet
     confidence: float = 0.0
     model_loaded: bool = False
@@ -49,6 +51,25 @@ def load_hand_landmarker(
     return vision.HandLandmarker.create_from_options(options)
 
 
+def load_pose_landmarker() -> vision.PoseLandmarker | None:
+    """The pose model is optional: without it there are no body anchors."""
+    if not config.POSE_MODEL_PATH.exists():
+        return None
+    options = vision.PoseLandmarkerOptions(
+        base_options=BaseOptions(model_asset_buffer=config.POSE_MODEL_PATH.read_bytes()),
+        running_mode=vision.RunningMode.VIDEO,
+        num_poses=1,
+    )
+    return vision.PoseLandmarker.create_from_options(options)
+
+
+def first_pose(result, width: int, height: int) -> np.ndarray | None:
+    if not result.pose_landmarks:
+        return None
+    lm = result.pose_landmarks[0]
+    return np.array([[p.x * width, p.y * height, p.z * width] for p in lm], dtype=np.float32)
+
+
 def first_hand(result, width: int, height: int) -> tuple[np.ndarray | None, str | None]:
     """Return (landmarks in pixel units, handedness) of the first detected hand.
 
@@ -62,14 +83,31 @@ def first_hand(result, width: int, height: int) -> tuple[np.ndarray | None, str 
     return pts, result.handedness[0][0].category_name
 
 
+GOLD = (0, 168, 235)  # BGR of #EBA800
+WHITE = (255, 255, 255)
+DARK = (24, 33, 42)  # BGR of #2A2118
+
+
 def draw_hand(frame: np.ndarray, pts: np.ndarray) -> None:
     for a, b in HAND_CONNECTIONS:
         pa = tuple(int(v) for v in pts[a, :2])
         pb = tuple(int(v) for v in pts[b, :2])
-        cv2.line(frame, pa, pb, (255, 255, 255), 3, cv2.LINE_AA)
+        cv2.line(frame, pa, pb, WHITE, 3, cv2.LINE_AA)
     for i, (x, y, _) in enumerate(pts):
-        color = (0, 169, 242) if i in FINGERTIPS else (0, 111, 204)  # BGR: gold tips, amber joints
-        cv2.circle(frame, (int(x), int(y)), 7 if i in FINGERTIPS else 5, color, -1, cv2.LINE_AA)
+        center, tip = (int(x), int(y)), i in FINGERTIPS
+        cv2.circle(frame, center, 8 if tip else 5, DARK, -1, cv2.LINE_AA)
+        cv2.circle(frame, center, 6 if tip else 4, GOLD if tip else WHITE, -1, cv2.LINE_AA)
+
+
+def draw_anchors(frame: np.ndarray, anchors: dict, scale: float, near: str | None) -> None:
+    """Gold rings at forehead / chin / chest; the one the hand touches is filled."""
+    radius = max(8, int(0.07 * scale))
+    for name, (x, y) in anchors.items():
+        center = (int(x), int(y))
+        if name == near:
+            cv2.circle(frame, center, radius, GOLD, -1, cv2.LINE_AA)
+        cv2.circle(frame, center, radius, DARK, 4, cv2.LINE_AA)
+        cv2.circle(frame, center, radius, GOLD, 2, cv2.LINE_AA)
 
 
 class CameraWorker(threading.Thread):
@@ -102,6 +140,7 @@ class CameraWorker(threading.Thread):
 
         # The letter model is optional: without it the UI still shows the hand.
         classifier = LetterClassifier() if LETTERS_MODEL_PATH.exists() else None
+        pose_landmarker = load_pose_landmarker()
 
         # DirectShow opens much faster than the default backend on Windows.
         cap = cv2.VideoCapture(self.camera_index, cv2.CAP_DSHOW)
@@ -133,11 +172,23 @@ class CameraWorker(threading.Thread):
                 ts = int((time.monotonic() - start) * 1000)
                 ts = max(ts, last_ts + 1)  # VIDEO mode needs strictly increasing timestamps
                 last_ts = ts
-                result = landmarker.detect_for_video(
-                    mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb), ts
-                )
+                image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+                pts, handedness = first_hand(landmarker.detect_for_video(image, ts), w, h)
 
-                pts, handedness = first_hand(result, w, h)
+                pose = near = None
+                if pose_landmarker is not None:
+                    pose = first_pose(pose_landmarker.detect_for_video(image, ts), w, h)
+                if pose is not None:
+                    try:
+                        anchors, scale = body.compute_anchors(pose)
+                    except ValueError:
+                        anchors = None
+                    if anchors is not None:
+                        if pts is not None:
+                            near = body.nearest_anchor(body.anchor_distances(pts, anchors, scale))
+                        if config.SHOW_BODY_ANCHORS:
+                            draw_anchors(frame, anchors, scale, near)
+
                 prediction, confidence = None, 0.0
                 if pts is not None:
                     draw_hand(frame, pts)
@@ -155,6 +206,8 @@ class CameraWorker(threading.Thread):
                     frame_id=frame_id,
                     landmarks=pts,
                     handedness=handedness,
+                    pose=pose,
+                    near_anchor=near,
                     prediction=prediction,
                     confidence=confidence,
                     model_loaded=classifier is not None,
@@ -164,3 +217,5 @@ class CameraWorker(threading.Thread):
         finally:
             cap.release()
             landmarker.close()
+            if pose_landmarker is not None:
+                pose_landmarker.close()

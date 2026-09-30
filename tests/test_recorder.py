@@ -46,6 +46,8 @@ def test_records_clip_with_landmarks(tmp_path, monkeypatch):
     data = np.load(tmp_path / "p01" / "s01" / "A_1.npz")
     assert data["points"].shape == (status["last_frames"], 21, 3)
     assert set(data["handedness"]) == {"Right"}
+    assert data["pose"].shape == (status["last_frames"], 33, 3)
+    assert np.isnan(data["pose"]).all()  # the fake worker has no body
 
 
 def test_numbering_and_undo(tmp_path, monkeypatch):

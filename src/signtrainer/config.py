@@ -20,6 +20,16 @@ HAND_MODEL_URL = (
     "hand_landmarker/float16/latest/hand_landmarker.task"
 )
 
+# MediaPipe pose model (lite = fastest), used for forehead / chin / chest anchors.
+POSE_MODEL_PATH = MODELS_DIR / "pose_landmarker_lite.task"
+POSE_MODEL_URL = (
+    "https://storage.googleapis.com/mediapipe-models/pose_landmarker/"
+    "pose_landmarker_lite/float16/latest/pose_landmarker_lite.task"
+)
+
+# Draw the body anchors on the video (useful while developing phrase signs).
+SHOW_BODY_ANCHORS = True
+
 # Webcam
 CAMERA_INDEX = 0
 CAMERA_WIDTH = 1280

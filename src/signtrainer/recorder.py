@@ -2,7 +2,8 @@
 
 Only landmarks are stored, never images. Layout:
     data/own/<person>/<session>/meta.json
-    data/own/<person>/<session>/<label>_<n>.npz   (points (N, 21, 3), handedness (N,))
+    data/own/<person>/<session>/<label>_<n>.npz
+        points (N, 21, 3), handedness (N,), pose (N, 33, 3) with NaN where no body was found
 """
 
 import json
@@ -71,7 +72,7 @@ class ClipRecorder:
         return self.dir / f"{label}_{n}.npz"
 
     def _record(self, label: str) -> None:
-        points, handedness = [], []
+        points, handedness, poses = [], [], []
         last_id = -1
         end = time.monotonic() + self.clip_seconds
         while time.monotonic() < end:
@@ -81,12 +82,14 @@ class ClipRecorder:
                 if snap.landmarks is not None:  # skip frames without a hand
                     points.append(snap.landmarks)
                     handedness.append(snap.handedness)
+                    poses.append(snap.pose if snap.pose is not None else np.full((33, 3), np.nan, np.float32))
             time.sleep(0.005)
 
         path = None
         if points:
             path = self._next_path(label)
-            np.savez_compressed(path, points=np.stack(points), handedness=np.array(handedness))
+            np.savez_compressed(path, points=np.stack(points), handedness=np.array(handedness),
+                                pose=np.stack(poses))
         with self._lock:
             self._recording = False
             self._last_saved = path
