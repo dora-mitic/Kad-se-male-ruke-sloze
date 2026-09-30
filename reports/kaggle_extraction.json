@@ -1,0 +1,98 @@
+{
+  "A": {
+    "images": 20,
+    "hands_found": 18
+  },
+  "B": {
+    "images": 20,
+    "hands_found": 18
+  },
+  "C": {
+    "images": 20,
+    "hands_found": 17
+  },
+  "D": {
+    "images": 20,
+    "hands_found": 18
+  },
+  "E": {
+    "images": 20,
+    "hands_found": 17
+  },
+  "F": {
+    "images": 20,
+    "hands_found": 20
+  },
+  "G": {
+    "images": 20,
+    "hands_found": 18
+  },
+  "H": {
+    "images": 20,
+    "hands_found": 18
+  },
+  "I": {
+    "images": 20,
+    "hands_found": 20
+  },
+  "K": {
+    "images": 20,
+    "hands_found": 20
+  },
+  "L": {
+    "images": 20,
+    "hands_found": 20
+  },
+  "M": {
+    "images": 20,
+    "hands_found": 8
+  },
+  "N": {
+    "images": 20,
+    "hands_found": 8
+  },
+  "O": {
+    "images": 20,
+    "hands_found": 19
+  },
+  "P": {
+    "images": 20,
+    "hands_found": 19
+  },
+  "Q": {
+    "images": 20,
+    "hands_found": 19
+  },
+  "R": {
+    "images": 20,
+    "hands_found": 19
+  },
+  "S": {
+    "images": 20,
+    "hands_found": 20
+  },
+  "T": {
+    "images": 20,
+    "hands_found": 18
+  },
+  "U": {
+    "images": 20,
+    "hands_found": 16
+  },
+  "V": {
+    "images": 20,
+    "hands_found": 16
+  },
+  "W": {
+    "images": 20,
+    "hands_found": 20
+  },
+  "X": {
+    "images": 20,
+    "hands_found": 16
+  },
+  "Y": {
+    "images": 20,
+    "hands_found": 20
+  }
+}

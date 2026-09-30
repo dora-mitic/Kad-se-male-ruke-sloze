@@ -19,3 +19,6 @@ data/
 .idea/
 Thumbs.db
 desktop.ini
+
+# Trained models (trained partly on GPL-2.0 data; decide on publishing later)
+*.joblib
