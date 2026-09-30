@@ -23,7 +23,7 @@ Built for Smotra Sveučilišta u Zagrebu, representing FER.
 | Milestone | Status |
 |---|---|
 | M0 Repo setup | done |
-| M1 Live landmarks | planned |
+| M1 Live landmarks (local web UI) | in progress |
 | M2 Data pipeline and baseline model | planned |
 | M3 Real-time recognition and subtitle bar | planned |
 | M4 Visitor experience | planned |
@@ -40,6 +40,7 @@ Requires Python 3.11 or 3.12 (MediaPipe does not reliably support newer versions
 py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
+python scripts/download_models.py   # one time; afterwards everything runs offline
 ```
 
 ## Run
@@ -47,6 +48,23 @@ pip install -e ".[dev]"
 ```powershell
 python -m signtrainer
 ```
+
+This starts a local server and opens <http://127.0.0.1:8000> in the browser: the
+mirrored webcam view with the 21 tracked hand points, a status indicator, and space
+reserved for subtitles and the reference sign. Stop with Ctrl+C.
+
+Options: `--camera 1` (another webcam), `--port 8001`, `--no-browser`.
+
+### How it works
+
+```
+webcam -> OpenCV -> MediaPipe HandLandmarker -> normalisation -> (classifier, M2+)
+                          |
+                          +-> FastAPI server -> browser: video (MJPEG) + live state (JSON)
+```
+
+The UI is a local web page rather than an OpenCV window because subtitles, fonts
+with Croatian characters and animated GIFs are much easier to do well in HTML.
 
 ## Test
 
