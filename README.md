@@ -23,7 +23,7 @@ Built for Smotra Sveučilišta u Zagrebu, representing FER.
 | Milestone | Status |
 |---|---|
 | M0 Repo setup | done |
-| M1 Live landmarks (local web UI) | in progress |
+| M1 Live landmarks (local web UI) | done |
 | M2 Data pipeline and baseline model | planned |
 | M3 Real-time recognition and subtitle bar | planned |
 | M4 Visitor experience | planned |
