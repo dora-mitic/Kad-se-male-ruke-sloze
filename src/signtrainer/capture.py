@@ -28,7 +28,9 @@ class HandFrame:
     timestamp: float = field(default_factory=time.time)
 
 
-def load_hand_landmarker() -> vision.HandLandmarker:
+def load_hand_landmarker(
+    running_mode: vision.RunningMode = vision.RunningMode.VIDEO,
+) -> vision.HandLandmarker:
     if not config.HAND_MODEL_PATH.exists():
         raise FileNotFoundError(
             f"{config.HAND_MODEL_PATH} is missing; run: python scripts/download_models.py"
@@ -37,10 +39,23 @@ def load_hand_landmarker() -> vision.HandLandmarker:
     # non-ASCII characters (this repo lives in "...slože").
     options = vision.HandLandmarkerOptions(
         base_options=BaseOptions(model_asset_buffer=config.HAND_MODEL_PATH.read_bytes()),
-        running_mode=vision.RunningMode.VIDEO,
+        running_mode=running_mode,
         num_hands=1,
     )
     return vision.HandLandmarker.create_from_options(options)
+
+
+def first_hand(result, width: int, height: int) -> tuple[np.ndarray | None, str | None]:
+    """Return (landmarks in pixel units, handedness) of the first detected hand.
+
+    Pixel units keep x and y on the same scale (z uses width, like x). Live capture
+    and dataset extraction both go through here, so their features match.
+    """
+    if not result.hand_landmarks:
+        return None, None
+    lm = result.hand_landmarks[0]
+    pts = np.array([[p.x * width, p.y * height, p.z * width] for p in lm], dtype=np.float32)
+    return pts, result.handedness[0][0].category_name
 
 
 def draw_hand(frame: np.ndarray, pts: np.ndarray) -> None:
@@ -115,12 +130,8 @@ class CameraWorker(threading.Thread):
                     mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb), ts
                 )
 
-                pts = handedness = None
-                if result.hand_landmarks:
-                    lm = result.hand_landmarks[0]
-                    # Pixel units so x and y are on the same scale (z uses width, like x).
-                    pts = np.array([[p.x * w, p.y * h, p.z * w] for p in lm], dtype=np.float32)
-                    handedness = result.handedness[0][0].category_name
+                pts, handedness = first_hand(result, w, h)
+                if pts is not None:
                     draw_hand(frame, pts)
 
                 now = time.monotonic()

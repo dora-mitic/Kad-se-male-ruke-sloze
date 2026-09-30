@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snimanje znakova</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Snimanje znakova <span id="who" class="muted"></span></h1>
+    <div id="progress" class="pill pill-wait"></div>
+  </header>
+
+  <main>
+    <div class="stage">
+      <img id="video" src="/video" alt="Kamera">
+      <div id="target" class="target-letter"></div>
+      <div id="countdown" class="countdown" hidden></div>
+      <div class="subtitles">
+        <span id="instruction"></span>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span><b>RAZMAK</b> snimi · <b>R</b> ponovi prethodno · <b>← →</b> preskoči</span>
+    <span id="fps"></span>
+  </footer>
+
+  <script src="/static/record.js"></script>
+</body>
+</html>

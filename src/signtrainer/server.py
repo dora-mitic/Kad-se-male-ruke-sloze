@@ -4,7 +4,7 @@ import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -13,8 +13,10 @@ from signtrainer.capture import CameraWorker
 WEB_DIR = Path(__file__).parent / "web"
 
 
-def create_app(camera_index: int = 0) -> FastAPI:
+def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
+    """Build the web app. `recorder_factory(worker)` enables the /record page."""
     worker = CameraWorker(camera_index)
+    recorder = recorder_factory(worker) if recorder_factory else None
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -54,5 +56,29 @@ def create_app(camera_index: int = 0) -> FastAPI:
             "handedness": snap.handedness,
             "fps": round(snap.fps, 1),
         }
+
+    if recorder is not None:
+
+        @app.get("/record")
+        def record_page():
+            return FileResponse(WEB_DIR / "record.html")
+
+        @app.get("/api/record/config")
+        def record_config():
+            return {"labels": recorder.labels, "rounds": recorder.rounds, **recorder.meta}
+
+        @app.get("/api/record/status")
+        def record_status():
+            return recorder.status()
+
+        @app.post("/api/record/start/{label}")
+        def record_start(label: str):
+            if label not in recorder.labels:
+                raise HTTPException(400, f"unknown label {label}")
+            return {"started": recorder.start(label)}
+
+        @app.post("/api/record/undo")
+        def record_undo():
+            return {"deleted": recorder.delete_last()}
 
     return app
