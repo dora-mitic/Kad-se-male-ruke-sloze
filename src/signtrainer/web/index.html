@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kad se male ruke slože</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Kad se male ruke slože</h1>
+    <div id="status" class="pill pill-wait">Pokrećem kameru…</div>
+  </header>
+
+  <main>
+    <div class="stage">
+      <img id="video" src="/video" alt="Kamera">
+
+      <div id="message" class="message" hidden></div>
+
+      <!-- Reference sign preview (M8): PNG/GIF of the last recognised sign -->
+      <aside id="sign-card" class="sign-card">
+        <div class="sign-placeholder">znak</div>
+      </aside>
+
+      <!-- Live subtitles (M3/M7) -->
+      <div class="subtitles">
+        <span id="subtitle-text" class="subtitle-placeholder">Ovdje će se pojaviti titlovi</span>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Pokaži ruku kameri ✋</span>
+    <span id="fps"></span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

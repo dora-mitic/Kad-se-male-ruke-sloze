@@ -50,7 +50,7 @@ Important positioning: "webcam recognizes ASL letters" is a very common tutorial
 - Python 3.11+
 - `mediapipe` (HandLandmarker), `opencv-python`, `numpy`
 - `scikit-learn` for the baseline; a small `torch` MLP only if it clearly helps
-- Simple UI: start with an OpenCV window with overlays. Discuss a nicer UI (e.g. pygame or a local web UI) only after the core works.
+- UI (decided in M1): a **local web UI** on localhost. Python (OpenCV + MediaPipe) does all processing; a small FastAPI/uvicorn server streams the annotated video (MJPEG) and live state (JSON) to a static HTML/CSS/JS page. Chosen because subtitles, Croatian characters and GIFs are easy in HTML and poor in OpenCV. Visitor-facing UI text is Croatian; subtitles are English. No Docker (webcam access from containers on Windows is impractical).
 - `pytest` for the feature-normalisation and data-handling code
 
 **Landmark normalisation** (this is where most accuracy comes from):
@@ -194,7 +194,6 @@ The project is ready when:
 
 - Smotra application deadline and the exact submission format (check the FER intranet announcement).
 - What laptop and camera will be used at the stand (Windows is confirmed).
-- UI choice: OpenCV window versus something prettier, decided after M3.
 - Exact phrase vocabulary for M6/M7 (start: HELLO, THANK YOU, I LOVE YOU, GOODBYE).
 
 Resolved: no mentor (the user works alone); Windows only; sign references from YouTube/ASL portals are accepted.

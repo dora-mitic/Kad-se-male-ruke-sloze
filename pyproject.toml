@@ -13,6 +13,8 @@ dependencies = [
     "opencv-python>=4.9",
     "numpy>=1.26",
     "scikit-learn>=1.4",
+    "fastapi>=0.110",
+    "uvicorn>=0.30",
 ]
 
 [project.optional-dependencies]
@@ -20,6 +22,9 @@ dev = ["pytest>=8"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+signtrainer = ["web/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
