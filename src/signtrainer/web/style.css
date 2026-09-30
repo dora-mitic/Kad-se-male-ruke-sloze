@@ -1,14 +1,31 @@
-/* Palette from the Deaf flag (WFD, 2023): dark blue = Deafhood,
-   turquoise = Deaf community and sign language, yellow = light and life. */
+/* Warm gold palette: #F9E6A8 cream, #F2A900 gold, #CC6F00 amber (subtitles),
+   #4D2A00 dark brown (text). Light is the default; the header button switches to dark. */
 :root {
-  --bg: #0a1633;
-  --panel: #12224a;
-  --text: #f7f5ee;
-  --muted: #9fb0cf;
-  --yellow: #ffc72c;
-  --turquoise: #2ec4c6;
-  --ok: var(--turquoise);
-  --bad: #ff5d5d;
+  --bg: #F9E6A8;
+  --panel: #4D2A00;
+  --text: #4D2A00;
+  --muted: #8A6630;
+  --gold: #F2A900;
+  --amber: #CC6F00;
+  --subtitle-text: var(--amber);
+  --subtitle-bg: rgba(255, 251, 239, 0.93);
+  --overlay-bg: rgba(249, 230, 168, 0.94);
+  --on-gold: #4D2A00;
+  --bad: #C62828;
+  --shadow: rgba(77, 42, 0, 0.25);
+}
+
+:root[data-theme="dark"] {
+  --bg: #1C1000;
+  --panel: #2B1900;
+  --text: #F9E6A8;
+  --muted: #C9A86A;
+  --subtitle-text: var(--gold);
+  --subtitle-bg: rgba(28, 16, 0, 0.86);
+  --overlay-bg: rgba(28, 16, 0, 0.92);
+  --on-gold: #1C1000;
+  --bad: #FF6B5B;
+  --shadow: rgba(0, 0, 0, 0.5);
 }
 
 * { box-sizing: border-box; }
@@ -19,6 +36,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: "Segoe UI", system-ui, sans-serif;
+  transition: background 0.2s, color 0.2s;
 }
 
 body {
@@ -35,7 +53,7 @@ header, footer {
 
 header {
   border-bottom: 3px solid transparent;
-  border-image: linear-gradient(90deg, var(--turquoise), var(--yellow)) 1;
+  border-image: linear-gradient(90deg, var(--gold), var(--amber)) 1;
 }
 
 h1 {
@@ -43,8 +61,22 @@ h1 {
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: var(--yellow);
+  color: var(--text);
 }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: transparent;
+  color: var(--text);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+.theme-toggle:hover { background: var(--gold); color: var(--on-gold); }
 
 footer {
   color: var(--muted);
@@ -58,8 +90,8 @@ footer {
   font-weight: 600;
   transition: background 0.2s;
 }
-.pill-ok   { background: var(--turquoise); color: var(--bg); }
-.pill-wait { background: transparent; color: var(--yellow); box-shadow: inset 0 0 0 2px var(--yellow); }
+.pill-ok   { background: var(--gold); color: var(--on-gold); }
+.pill-wait { background: transparent; color: var(--amber); box-shadow: inset 0 0 0 2px var(--amber); }
 .pill-bad  { background: var(--bad); color: #fff; }
 
 main {
@@ -79,7 +111,7 @@ main {
   background: var(--panel);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 0 0 2px rgba(255, 199, 44, 0.25), 0 20px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 3px var(--gold), 0 20px 60px var(--shadow);
 }
 
 #video {
@@ -98,7 +130,8 @@ main {
   text-align: center;
   padding: 40px;
   font-size: 1.6rem;
-  background: rgba(10, 22, 51, 0.88);
+  background: var(--overlay-bg);
+  color: var(--text);
 }
 .message[hidden] { display: none; }
 
@@ -111,12 +144,12 @@ main {
   max-width: 80%;
   padding: 10px 26px;
   border-radius: 10px;
-  background: rgba(5, 12, 30, 0.78);
+  background: var(--subtitle-bg);
+  box-shadow: 0 4px 16px var(--shadow);
   font-size: clamp(1.6rem, 3.2vw, 3rem);
   font-weight: 700;
   text-align: center;
-  color: var(--yellow);
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  color: var(--subtitle-text);
 }
 .guess { font-size: 1.4em; }
 .guess small { font-size: 0.45em; margin-left: 0.6em; color: var(--muted); font-weight: 400; }
@@ -135,8 +168,8 @@ main {
   width: clamp(120px, 16%, 220px);
   aspect-ratio: 1;
   border-radius: 14px;
-  background: rgba(10, 22, 51, 0.6);
-  border: 2px dashed rgba(46, 196, 198, 0.6);
+  background: var(--subtitle-bg);
+  border: 2px dashed var(--gold);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,11 +188,11 @@ main {
   font-size: clamp(5rem, 14vw, 11rem);
   font-weight: 700;
   line-height: 1;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.75);
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
   transition: color 0.2s;
 }
-.target-letter.hand-ok { color: var(--yellow); }
+.target-letter.hand-ok { color: var(--gold); }
 
 .countdown {
   position: absolute;
@@ -169,7 +202,7 @@ main {
   justify-content: center;
   font-size: clamp(6rem, 20vw, 16rem);
   font-weight: 700;
-  color: var(--yellow);
+  color: var(--gold);
   text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
 }
 .countdown[hidden] { display: none; }

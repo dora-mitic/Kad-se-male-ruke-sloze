@@ -68,7 +68,7 @@ def draw_hand(frame: np.ndarray, pts: np.ndarray) -> None:
         pb = tuple(int(v) for v in pts[b, :2])
         cv2.line(frame, pa, pb, (255, 255, 255), 3, cv2.LINE_AA)
     for i, (x, y, _) in enumerate(pts):
-        color = (44, 199, 255) if i in FINGERTIPS else (198, 196, 46)  # BGR: yellow tips, turquoise joints
+        color = (0, 169, 242) if i in FINGERTIPS else (0, 111, 204)  # BGR: gold tips, amber joints
         cv2.circle(frame, (int(x), int(y)), 7 if i in FINGERTIPS else 5, color, -1, cv2.LINE_AA)
 
 
