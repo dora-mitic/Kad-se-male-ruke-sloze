@@ -107,6 +107,9 @@ main {
   font-weight: 600;
   text-align: center;
 }
+.guess { font-size: 1.4em; }
+.guess small { font-size: 0.45em; margin-left: 0.6em; color: var(--muted); font-weight: 400; }
+.guess-unsure { opacity: 0.5; }
 .subtitle-placeholder {
   color: var(--muted);
   font-weight: 400;

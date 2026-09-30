@@ -4,6 +4,22 @@ const statusEl = document.getElementById("status");
 const messageEl = document.getElementById("message");
 const fpsEl = document.getElementById("fps");
 const videoEl = document.getElementById("video");
+const subtitleEl = document.getElementById("subtitle-text");
+
+// Until M3 adds smoothing and hold-to-confirm, the subtitle shows the raw guess.
+function showPrediction(s) {
+  if (!s.model_loaded) {
+    subtitleEl.className = "subtitle-placeholder";
+    subtitleEl.textContent = "Model još nije istreniran";
+  } else if (!s.hand_detected || !s.prediction) {
+    subtitleEl.className = "subtitle-placeholder";
+    subtitleEl.textContent = "Pokaži slovo…";
+  } else {
+    const pct = Math.round(s.confidence * 100);
+    subtitleEl.className = s.confidence >= 0.6 ? "guess" : "guess guess-unsure";
+    subtitleEl.innerHTML = `${s.prediction}<small>${pct} %</small>`;
+  }
+}
 
 const ERRORS = {
   camera_unavailable: "Kamera nije dostupna. Provjeri je li spojena i koristi li je neki drugi program.",
@@ -37,6 +53,7 @@ async function poll() {
       setStatus("Pokaži ruku kameri", "wait");
       showMessage("");
     }
+    showPrediction(s);
     fpsEl.textContent = s.fps ? `${Math.round(s.fps)} FPS` : "";
   } catch {
     setStatus("Server ne radi", "bad");

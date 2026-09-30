@@ -47,7 +47,7 @@ def main() -> None:
     person_independent = bool(own_people)
     folds = [(p, data["person"] == p) for p in own_people] or kaggle_fallback_split(data)
 
-    print(f"{len(y)} samples, {len(classes)} letters, people: {sorted(np.unique(data['person']))}")
+    print(f"{len(y)} samples, {len(classes)} letters, people: {[str(p) for p in np.unique(data['person'])]}")
     if not person_independent:
         print("WARNING: no own recordings, evaluating on Kaggle itself (not person-independent).")
 

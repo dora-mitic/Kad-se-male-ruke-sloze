@@ -54,6 +54,9 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
             "camera_ready": snap.jpeg is not None,
             "hand_detected": snap.landmarks is not None,
             "handedness": snap.handedness,
+            "model_loaded": snap.model_loaded,
+            "prediction": snap.prediction,
+            "confidence": round(snap.confidence, 3),
             "fps": round(snap.fps, 1),
         }
 

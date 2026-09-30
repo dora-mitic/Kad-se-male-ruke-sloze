@@ -10,6 +10,7 @@ import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
 from signtrainer import config
+from signtrainer.model import LETTERS_MODEL_PATH, LetterClassifier
 
 HAND_CONNECTIONS = [(c.start, c.end) for c in vision.HandLandmarksConnections.HAND_CONNECTIONS]
 FINGERTIPS = {4, 8, 12, 16, 20}
@@ -23,6 +24,9 @@ class HandFrame:
     frame_id: int = 0
     landmarks: np.ndarray | None = None  # (21, 3) in pixel units, or None
     handedness: str | None = None
+    prediction: str | None = None  # raw per-frame guess, no smoothing yet
+    confidence: float = 0.0
+    model_loaded: bool = False
     fps: float = 0.0
     error: str | None = None
     timestamp: float = field(default_factory=time.time)
@@ -96,6 +100,9 @@ class CameraWorker(threading.Thread):
             self._publish(error=str(exc))
             return
 
+        # The letter model is optional: without it the UI still shows the hand.
+        classifier = LetterClassifier() if LETTERS_MODEL_PATH.exists() else None
+
         # DirectShow opens much faster than the default backend on Windows.
         cap = cv2.VideoCapture(self.camera_index, cv2.CAP_DSHOW)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAMERA_WIDTH)
@@ -131,8 +138,11 @@ class CameraWorker(threading.Thread):
                 )
 
                 pts, handedness = first_hand(result, w, h)
+                prediction, confidence = None, 0.0
                 if pts is not None:
                     draw_hand(frame, pts)
+                    if classifier is not None:
+                        prediction, confidence = classifier.predict(pts, handedness)
 
                 now = time.monotonic()
                 fps = 0.9 * fps + 0.1 * (1.0 / max(now - prev, 1e-6))
@@ -145,6 +155,9 @@ class CameraWorker(threading.Thread):
                     frame_id=frame_id,
                     landmarks=pts,
                     handedness=handedness,
+                    prediction=prediction,
+                    confidence=confidence,
+                    model_loaded=classifier is not None,
                     fps=fps,
                     error=None,
                 )

@@ -1,98 +1,98 @@
 {
   "A": {
-    "images": 20,
-    "hands_found": 18
+    "images": 3000,
+    "hands_found": 2182
   },
   "B": {
-    "images": 20,
-    "hands_found": 18
+    "images": 3000,
+    "hands_found": 2202
   },
   "C": {
-    "images": 20,
-    "hands_found": 17
+    "images": 3000,
+    "hands_found": 1962
   },
   "D": {
-    "images": 20,
-    "hands_found": 18
+    "images": 3000,
+    "hands_found": 2457
   },
   "E": {
-    "images": 20,
-    "hands_found": 17
+    "images": 3000,
+    "hands_found": 2307
   },
   "F": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2864
   },
   "G": {
-    "images": 20,
-    "hands_found": 18
+    "images": 3000,
+    "hands_found": 2428
   },
   "H": {
-    "images": 20,
-    "hands_found": 18
+    "images": 3000,
+    "hands_found": 2373
   },
   "I": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2379
   },
   "K": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2699
   },
   "L": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2521
   },
   "M": {
-    "images": 20,
-    "hands_found": 8
+    "images": 3000,
+    "hands_found": 1603
   },
   "N": {
-    "images": 20,
-    "hands_found": 8
+    "images": 3000,
+    "hands_found": 1275
   },
   "O": {
-    "images": 20,
-    "hands_found": 19
+    "images": 3000,
+    "hands_found": 2258
   },
   "P": {
-    "images": 20,
-    "hands_found": 19
+    "images": 3000,
+    "hands_found": 2040
   },
   "Q": {
-    "images": 20,
-    "hands_found": 19
+    "images": 3000,
+    "hands_found": 2118
   },
   "R": {
-    "images": 20,
-    "hands_found": 19
+    "images": 3000,
+    "hands_found": 2545
   },
   "S": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2555
   },
   "T": {
-    "images": 20,
-    "hands_found": 18
+    "images": 3000,
+    "hands_found": 2354
   },
   "U": {
-    "images": 20,
-    "hands_found": 16
+    "images": 3000,
+    "hands_found": 2509
   },
   "V": {
-    "images": 20,
-    "hands_found": 16
+    "images": 3000,
+    "hands_found": 2548
   },
   "W": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2453
   },
   "X": {
-    "images": 20,
-    "hands_found": 16
+    "images": 3000,
+    "hands_found": 2156
   },
   "Y": {
-    "images": 20,
-    "hands_found": 20
+    "images": 3000,
+    "hands_found": 2580
   }
 }
