@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Data: never commit raw datasets or recorded personal data
+data/
+
+# Large or generated binaries
+*.task
+*.mp4
+*.avi
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
