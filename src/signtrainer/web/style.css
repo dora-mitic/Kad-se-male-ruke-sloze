@@ -1,12 +1,14 @@
+/* Palette from the Deaf flag (WFD, 2023): dark blue = Deafhood,
+   turquoise = Deaf community and sign language, yellow = light and life. */
 :root {
-  --bg: #0f1115;
-  --panel: #1a1d24;
-  --text: #f4f5f7;
-  --muted: #9aa0ab;
-  --ok: #2fbf71;
-  --warn: #f2a93b;
-  --bad: #e5484d;
-  --accent: #4ea8ff;
+  --bg: #0a1633;
+  --panel: #12224a;
+  --text: #f7f5ee;
+  --muted: #9fb0cf;
+  --yellow: #ffc72c;
+  --turquoise: #2ec4c6;
+  --ok: var(--turquoise);
+  --bad: #ff5d5d;
 }
 
 * { box-sizing: border-box; }
@@ -31,11 +33,17 @@ header, footer {
   padding: 14px 28px;
 }
 
+header {
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--turquoise), var(--yellow)) 1;
+}
+
 h1 {
   margin: 0;
   font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.01em;
+  color: var(--yellow);
 }
 
 footer {
@@ -50,9 +58,9 @@ footer {
   font-weight: 600;
   transition: background 0.2s;
 }
-.pill-ok   { background: var(--ok);   color: #06210f; }
-.pill-wait { background: var(--warn); color: #2b1a00; }
-.pill-bad  { background: var(--bad);  color: #fff; }
+.pill-ok   { background: var(--turquoise); color: var(--bg); }
+.pill-wait { background: transparent; color: var(--yellow); box-shadow: inset 0 0 0 2px var(--yellow); }
+.pill-bad  { background: var(--bad); color: #fff; }
 
 main {
   display: flex;
@@ -71,6 +79,7 @@ main {
   background: var(--panel);
   border-radius: 18px;
   overflow: hidden;
+  box-shadow: 0 0 0 2px rgba(255, 199, 44, 0.25), 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
 #video {
@@ -89,7 +98,7 @@ main {
   text-align: center;
   padding: 40px;
   font-size: 1.6rem;
-  background: rgba(15, 17, 21, 0.85);
+  background: rgba(10, 22, 51, 0.88);
 }
 .message[hidden] { display: none; }
 
@@ -102,10 +111,12 @@ main {
   max-width: 80%;
   padding: 10px 26px;
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(5, 12, 30, 0.78);
   font-size: clamp(1.6rem, 3.2vw, 3rem);
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
+  color: var(--yellow);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 .guess { font-size: 1.4em; }
 .guess small { font-size: 0.45em; margin-left: 0.6em; color: var(--muted); font-weight: 400; }
@@ -124,8 +135,8 @@ main {
   width: clamp(120px, 16%, 220px);
   aspect-ratio: 1;
   border-radius: 14px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 2px dashed rgba(255, 255, 255, 0.35);
+  background: rgba(10, 22, 51, 0.6);
+  border: 2px dashed rgba(46, 196, 198, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -144,11 +155,11 @@ main {
   font-size: clamp(5rem, 14vw, 11rem);
   font-weight: 700;
   line-height: 1;
-  color: var(--warn);
+  color: var(--muted);
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
   transition: color 0.2s;
 }
-.target-letter.hand-ok { color: var(--ok); }
+.target-letter.hand-ok { color: var(--yellow); }
 
 .countdown {
   position: absolute;
@@ -158,7 +169,7 @@ main {
   justify-content: center;
   font-size: clamp(6rem, 20vw, 16rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--yellow);
   text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
 }
 .countdown[hidden] { display: none; }
