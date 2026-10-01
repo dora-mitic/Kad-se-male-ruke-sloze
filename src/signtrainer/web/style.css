@@ -14,6 +14,9 @@
   --overlay-bg: rgba(255, 253, 248, 0.94);
   --bad: #C62828;
   --shadow: rgba(42, 33, 24, 0.18);
+  --pattern-fine: rgba(42, 33, 24, 0.07);
+  --pattern-major: rgba(235, 168, 0, 0.22);
+  --topo-line: rgba(235, 168, 0, 0.30);
 }
 
 :root[data-theme="dark"] {
@@ -29,6 +32,9 @@
   --overlay-bg: rgba(22, 18, 13, 0.93);
   --bad: #FF6B5B;
   --shadow: rgba(0, 0, 0, 0.5);
+  --pattern-fine: rgba(247, 235, 216, 0.05);
+  --pattern-major: rgba(242, 181, 48, 0.16);
+  --topo-line: rgba(242, 181, 48, 0.20);
 }
 
 * { box-sizing: border-box; }
@@ -36,10 +42,33 @@
 html, body {
   height: 100%;
   margin: 0;
-  background: var(--bg);
   color: var(--text);
   font-family: "Segoe UI", system-ui, sans-serif;
-  transition: background 0.2s, color 0.2s;
+}
+
+/* Background colour lives on <html> only, so the pattern layer can sit
+   between it and the page content. */
+html { background: var(--bg); transition: background 0.2s; }
+body { background: transparent; }
+
+/* Background patterns, chosen with ?bg=paper|topo|none (see bg.js) */
+html[data-bg="paper"] {
+  background-image:
+    linear-gradient(var(--pattern-fine) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pattern-fine) 1px, transparent 1px),
+    linear-gradient(var(--pattern-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pattern-major) 1px, transparent 1px);
+  background-size: 14px 14px, 14px 14px, 70px 70px, 70px 70px;
+  background-attachment: fixed;
+}
+
+#bg-topo {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
 }
 
 body {
@@ -56,6 +85,7 @@ header, footer {
 
 header {
   border-bottom: 3px solid var(--gold);
+  background: var(--overlay-bg);
 }
 
 h1 {
