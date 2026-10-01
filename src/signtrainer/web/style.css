@@ -48,13 +48,25 @@
   --pattern-faint: rgba(247, 235, 216, 0.05);
 }
 
+/* Fonts are bundled (SIL OFL, see web/fonts/OFL-*.txt) so the app works offline.
+   Fredoka has no č/ć/đ; the browser draws those few letters in Nunito instead. */
+@font-face { font-family: "Nunito"; src: url("/static/fonts/Nunito.ttf") format("truetype"); font-weight: 200 1000; font-display: swap; }
+@font-face { font-family: "Fredoka"; src: url("/static/fonts/Fredoka.ttf") format("truetype"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Quicksand"; src: url("/static/fonts/Quicksand.ttf") format("truetype"); font-weight: 300 700; font-display: swap; }
+
+:root {
+  --font-display: "Fredoka", "Nunito", "Segoe UI", sans-serif;  /* titles, big letters */
+  --font-body: "Nunito", "Segoe UI", sans-serif;                /* subtitles, text */
+  --font-small: "Quicksand", "Nunito", "Segoe UI", sans-serif;  /* hints, labels, pills */
+}
+
 * { box-sizing: border-box; }
 
 html, body {
   height: 100%;
   margin: 0;
   color: var(--text);
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font-body);
 }
 
 /* Background colour and pattern live on <html>, so the page content (and the
@@ -113,8 +125,9 @@ header {
 
 h1 {
   margin: 0;
-  font-size: 1.7rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--header-text);
 }
@@ -134,6 +147,7 @@ h1 {
 .theme-toggle:hover { background: var(--panel); color: var(--gold); }
 
 .pill {
+  font-family: var(--font-small);
   padding: 8px 18px;
   border-radius: 999px;
   font-size: 1.1rem;
@@ -190,6 +204,7 @@ main {
 }
 .pattern-rail h2 {
   margin: 0 0 10px;
+  font-family: var(--font-small);
   font-size: 0.85rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -234,6 +249,8 @@ main {
 /* ---- footer ----------------------------------------------------------- */
 
 footer {
+  font-family: var(--font-small);
+  font-weight: 600;
   color: var(--muted);
   font-size: 1.1rem;
 }
@@ -243,7 +260,7 @@ footer {
   background: var(--surface);
   border: 2px solid var(--gold);
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ---- subtitles and sign card ------------------------------------------ */
@@ -265,8 +282,8 @@ footer {
   text-align: center;
   color: var(--subtitle-text);
 }
-.guess { font-size: 1.4em; }
-.guess small { font-size: 0.45em; margin-left: 0.6em; color: #D8C7AE; font-weight: 400; }
+.guess { font-family: var(--font-display); font-weight: 600; font-size: 1.4em; }
+.guess small { font-family: var(--font-small); font-size: 0.45em; margin-left: 0.6em; color: #D8C7AE; font-weight: 400; }
 .guess-unsure { opacity: 0.5; }
 .subtitle-placeholder {
   color: #B5A38A;
@@ -303,6 +320,7 @@ footer {
 .muted { color: inherit; opacity: 0.7; font-weight: 400; }
 
 .target-letter {
+  font-family: var(--font-display);
   position: absolute;
   top: 20px;
   left: 28px;
@@ -316,6 +334,7 @@ footer {
 .target-letter.hand-ok { color: var(--gold-bright); }
 
 .countdown {
+  font-family: var(--font-display);
   position: absolute;
   inset: 0;
   display: flex;
