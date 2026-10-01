@@ -18,11 +18,9 @@
   --bad: #C62828;
   --shadow: rgba(42, 33, 24, 0.18);
   --offset-shadow: #2A2118;
-  /* background patterns (patterns.js) */
+  /* background confetti (confetti.js) */
   --pattern-line: rgba(214, 150, 0, 0.42);
   --pattern-strong: rgba(214, 150, 0, 0.62);
-  --pattern-soft: rgba(235, 168, 0, 0.16);
-  --pattern-faint: rgba(42, 33, 24, 0.07);
 }
 
 :root[data-theme="dark"] {
@@ -44,8 +42,6 @@
   --offset-shadow: rgba(242, 181, 48, 0.35);
   --pattern-line: rgba(242, 181, 48, 0.26);
   --pattern-strong: rgba(242, 181, 48, 0.42);
-  --pattern-soft: rgba(242, 181, 48, 0.09);
-  --pattern-faint: rgba(247, 235, 216, 0.05);
 }
 
 /* Fonts are bundled (SIL OFL, see web/fonts/OFL-*.txt) so the app works offline.
@@ -69,11 +65,10 @@ html, body {
   font-family: var(--font-body);
 }
 
-/* Background colour and pattern live on <html>, so the page content (and the
-   canvas used by some patterns) can sit on top of it. */
+/* Background colour lives on <html>; the confetti canvas sits between it and
+   the page content. */
 html {
   background-color: var(--bg);
-  background-attachment: fixed;
   transition: background-color 0.2s;
 }
 body { background: transparent; }
@@ -161,13 +156,12 @@ h1 {
 .pill-anchor { background: #FFFFFF; color: #2A2118; }
 .pill[hidden] { display: none; }
 
-/* ---- main area: pattern rail + camera stage --------------------------- */
+/* ---- main area: camera stage ----------------------------------------- */
 
 main {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 28px;
   min-height: 0;
   padding: 24px 40px;
 }
@@ -191,45 +185,6 @@ main {
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.pattern-rail {
-  flex: none;
-  align-self: center;
-  padding: 14px 12px;
-  border-radius: 18px;
-  background: var(--surface);
-  border: 3px solid var(--gold);
-  box-shadow: 6px 6px 0 var(--offset-shadow);
-}
-.pattern-rail h2 {
-  margin: 0 0 10px;
-  font-family: var(--font-small);
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  text-align: center;
-  color: var(--text);
-}
-.pattern-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 44px);
-  gap: 8px;
-}
-.pattern-grid button {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 2px solid rgba(0, 0, 0, 0.12);
-  background-color: var(--bg);
-  cursor: pointer;
-  transition: transform 0.1s, border-color 0.1s;
-}
-.pattern-grid button:hover { transform: translateY(-2px); border-color: var(--gold); }
-.pattern-grid button[aria-pressed="true"] {
-  border: 3px solid var(--panel);
-  box-shadow: 0 0 0 2px var(--gold);
 }
 
 .message {
@@ -346,10 +301,3 @@ footer {
   text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
 }
 .countdown[hidden] { display: none; }
-
-/* Narrow screens: rail goes above the camera instead of beside it */
-@media (max-width: 900px) {
-  main { flex-direction: column; padding: 16px; }
-  .pattern-grid { grid-template-columns: repeat(7, 40px); }
-  .pattern-grid button { width: 40px; height: 40px; }
-}
