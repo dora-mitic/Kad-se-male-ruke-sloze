@@ -3,7 +3,7 @@
 // per browser. Colours come from the theme's --pattern-* CSS variables.
 (function () {
   const root = document.documentElement;
-  const DEFAULT = "honeycomb";
+  const DEFAULT = "memphis";
 
   const svg = (w, h, body) =>
     `url("data:image/svg+xml,${encodeURIComponent(
