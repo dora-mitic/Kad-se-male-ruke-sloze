@@ -1,14 +1,10 @@
 // Background pattern: "paper" (CSS grid), "topo" (contour lines drawn on a canvas)
-// or "none". Pick with ?bg=..., the choice is remembered per browser.
+// or "none" (default). Pick with ?bg=... in the address.
 (function () {
   const root = document.documentElement;
   const PATTERNS = ["paper", "topo", "none"];
   let bg = new URLSearchParams(location.search).get("bg");
-  try {
-    if (PATTERNS.includes(bg)) localStorage.setItem("bg", bg);
-    else bg = localStorage.getItem("bg");
-  } catch {}
-  if (!PATTERNS.includes(bg)) bg = "paper";
+  if (!PATTERNS.includes(bg)) bg = "none";
   root.dataset.bg = bg;
   if (bg !== "topo") return;
 

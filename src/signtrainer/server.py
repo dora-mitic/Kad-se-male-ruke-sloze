@@ -8,9 +8,19 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
+from signtrainer import config
 from signtrainer.capture import CameraWorker
 
 WEB_DIR = Path(__file__).parent / "web"
+
+
+def sign_images() -> dict[str, str]:
+    """Map each label to its reference image file name, e.g. {"A": "A.png"}."""
+    found = {}
+    for path in sorted(config.SIGN_ASSETS_DIR.glob("*")):
+        if path.suffix.lower() in config.SIGN_EXTENSIONS:
+            found.setdefault(path.stem.upper(), path.name)
+    return found
 
 
 def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
@@ -26,13 +36,15 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
 
     app = FastAPI(lifespan=lifespan)
     app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+    config.SIGN_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    app.mount("/signs", StaticFiles(directory=config.SIGN_ASSETS_DIR), name="signs")
 
     @app.middleware("http")
     async def revalidate_pages(request, call_next):
         # Without this, browsers reuse an old style.css/app.js for hours after an
         # update. "no-cache" still allows caching but checks the ETag every time.
         response = await call_next(request)
-        if request.url.path == "/" or request.url.path.startswith(("/static", "/record")):
+        if request.url.path == "/" or request.url.path.startswith(("/static", "/record", "/signs")):
             response.headers["Cache-Control"] = "no-cache"
         return response
 
@@ -54,6 +66,11 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
                 yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + snap.jpeg + b"\r\n"
 
         return StreamingResponse(frames(), media_type="multipart/x-mixed-replace; boundary=frame")
+
+    @app.get("/api/signs")
+    def signs():
+        # Rescanned on every call, so new images show up without a restart.
+        return sign_images()
 
     @app.get("/api/state")
     def state():

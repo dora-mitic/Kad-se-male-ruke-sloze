@@ -6,6 +6,31 @@ const fpsEl = document.getElementById("fps");
 const videoEl = document.getElementById("video");
 const subtitleEl = document.getElementById("subtitle-text");
 const anchorEl = document.getElementById("anchor");
+const signCard = document.getElementById("sign-card");
+const signImg = document.getElementById("sign-img");
+const signLabel = document.getElementById("sign-label");
+
+// Reference images available on the server, e.g. {"A": "A.png"}.
+let signImages = {};
+async function loadSignImages() {
+  try { signImages = await (await fetch("/api/signs")).json(); } catch {}
+}
+loadSignImages();
+setInterval(loadSignImages, 5000);
+
+// Show the last confidently recognised sign; it stays until a new one appears,
+// so the card doesn't flicker on every uncertain frame.
+let shownSign = null;
+function showSignCard(s) {
+  if (!s.hand_detected || !s.prediction || s.confidence < 0.6) return;
+  const file = signImages[s.prediction];
+  if (!file || s.prediction === shownSign) return;
+  shownSign = s.prediction;
+  signImg.src = `/signs/${encodeURIComponent(file)}`;
+  signImg.alt = `Znak ${s.prediction}`;
+  signLabel.textContent = s.prediction;
+  signCard.hidden = false;
+}
 
 const ANCHOR_LABELS = { forehead: "Ruka kod čela", chin: "Ruka kod brade", chest: "Ruka kod prsa" };
 
@@ -63,6 +88,7 @@ async function poll() {
       showMessage("");
     }
     showPrediction(s);
+    showSignCard(s);
     showAnchor(s);
     fpsEl.textContent = s.fps ? `${Math.round(s.fps)} FPS` : "";
   } catch {

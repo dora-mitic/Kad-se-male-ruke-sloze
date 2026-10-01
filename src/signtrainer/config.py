@@ -13,6 +13,11 @@ ASSETS_DIR = ROOT / "assets"
 # Sign language to use. Only "asl" is supported for now; "hzj" is a stretch goal.
 LANGUAGE = "asl"
 
+# Reference images/GIFs of each sign, named by label: assets/signs/asl/A.png, ...
+# Every file must be listed with its source and licence in ASSETS.md.
+SIGN_ASSETS_DIR = ASSETS_DIR / "signs" / LANGUAGE
+SIGN_EXTENSIONS = (".gif", ".webp", ".png", ".jpg", ".jpeg", ".svg")
+
 # MediaPipe hand landmark model, downloaded by scripts/download_models.py.
 HAND_MODEL_PATH = MODELS_DIR / "hand_landmarker.task"
 HAND_MODEL_URL = (
