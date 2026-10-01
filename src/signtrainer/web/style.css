@@ -14,9 +14,9 @@
   --overlay-bg: rgba(255, 253, 248, 0.94);
   --bad: #C62828;
   --shadow: rgba(42, 33, 24, 0.18);
-  --pattern-fine: rgba(42, 33, 24, 0.07);
-  --pattern-major: rgba(235, 168, 0, 0.22);
-  --topo-line: rgba(235, 168, 0, 0.30);
+  --pattern-fine: rgba(42, 33, 24, 0.09);
+  --pattern-major: rgba(235, 168, 0, 0.32);
+  --topo-line: rgba(204, 140, 0, 0.45);
 }
 
 :root[data-theme="dark"] {
@@ -32,9 +32,9 @@
   --overlay-bg: rgba(22, 18, 13, 0.93);
   --bad: #FF6B5B;
   --shadow: rgba(0, 0, 0, 0.5);
-  --pattern-fine: rgba(247, 235, 216, 0.05);
-  --pattern-major: rgba(242, 181, 48, 0.16);
-  --topo-line: rgba(242, 181, 48, 0.20);
+  --pattern-fine: rgba(247, 235, 216, 0.06);
+  --pattern-major: rgba(242, 181, 48, 0.20);
+  --topo-line: rgba(242, 181, 48, 0.28);
 }
 
 * { box-sizing: border-box; }
@@ -133,13 +133,13 @@ main {
   align-items: center;
   justify-content: center;
   min-height: 0;
-  padding: 0 28px;
+  padding: 20px 56px;
 }
 
 .stage {
   position: relative;
   height: 100%;
-  max-height: calc(100vh - 140px);
+  max-height: calc(100vh - 190px);
   aspect-ratio: 16 / 9;
   max-width: 100%;
   background: var(--panel);

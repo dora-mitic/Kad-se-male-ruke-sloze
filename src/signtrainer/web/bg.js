@@ -17,7 +17,7 @@
     let s = seed;
     const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
     const waves = Array.from({ length: 8 }, () => ({
-      kx: (rnd() - 0.5) * 9, ky: (rnd() - 0.5) * 9, p: rnd() * Math.PI * 2, a: 0.5 + rnd(),
+      kx: (rnd() - 0.5) * 18, ky: (rnd() - 0.5) * 18, p: rnd() * Math.PI * 2, a: 0.5 + rnd(),
     }));
     return (x, y) => waves.reduce((sum, w) => sum + w.a * Math.sin(w.kx * x + w.ky * y + w.p), 0);
   }

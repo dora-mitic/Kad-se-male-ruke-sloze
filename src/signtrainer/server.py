@@ -27,6 +27,15 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
     app = FastAPI(lifespan=lifespan)
     app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
+    @app.middleware("http")
+    async def revalidate_pages(request, call_next):
+        # Without this, browsers reuse an old style.css/app.js for hours after an
+        # update. "no-cache" still allows caching but checks the ETag every time.
+        response = await call_next(request)
+        if request.url.path == "/" or request.url.path.startswith(("/static", "/record")):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
+
     @app.get("/")
     def index():
         return FileResponse(WEB_DIR / "index.html")
