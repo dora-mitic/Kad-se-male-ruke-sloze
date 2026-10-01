@@ -5,11 +5,12 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from signtrainer import config
 from signtrainer.capture import CameraWorker
+from signtrainer.images import trim_to_content
 
 WEB_DIR = Path(__file__).parent / "web"
 
@@ -37,7 +38,19 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
     app = FastAPI(lifespan=lifespan)
     app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
     config.SIGN_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    app.mount("/signs", StaticFiles(directory=config.SIGN_ASSETS_DIR), name="signs")
+    trimmed: dict[tuple[str, float], bytes] = {}  # (name, mtime) -> trimmed PNG
+
+    @app.get("/signs/{name}")
+    def sign_image(name: str):
+        if name not in sign_images().values():
+            raise HTTPException(404)
+        path = config.SIGN_ASSETS_DIR / name
+        if path.suffix.lower() not in (".png", ".jpg", ".jpeg", ".webp"):
+            return FileResponse(path)  # GIF/SVG: served as-is (animation, vectors)
+        key = (name, path.stat().st_mtime)
+        if key not in trimmed:
+            trimmed[key] = trim_to_content(path.read_bytes())
+        return Response(trimmed[key], media_type="image/png")
 
     @app.middleware("http")
     async def revalidate_pages(request, call_next):

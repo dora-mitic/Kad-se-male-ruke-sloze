@@ -195,25 +195,26 @@ main {
   font-style: italic;
 }
 
-/* Reference sign in the bottom-right corner, above the subtitle line */
+/* Reference sign in the bottom-right corner, above the subtitle line.
+   White in both themes: the drawings are black lines on transparent PNGs. */
 .sign-card {
   position: absolute;
   right: 24px;
   bottom: 120px;
-  width: clamp(120px, 16%, 220px);
+  width: clamp(130px, 17%, 240px);
   aspect-ratio: 1;
+  padding: 6px;
   border-radius: 14px;
-  background: var(--card-bg);
-  border: 2px dashed var(--gold);
+  background: #FFFFFF;
+  border: 3px solid var(--gold);
+  box-shadow: 0 6px 20px var(--shadow);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 .sign-card[hidden] { display: none; }
-.sign-card { flex-direction: column; padding: 8px; border-style: solid; }
-.sign-card img { width: 100%; flex: 1; min-height: 0; object-fit: contain; }
-.sign-label { font-weight: 700; font-size: 1.2rem; color: var(--text); line-height: 1.2; }
+.sign-card img { width: 100%; height: 100%; object-fit: contain; }
 
 /* Recording page */
 .muted { color: var(--muted); font-weight: 400; }

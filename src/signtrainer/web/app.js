@@ -8,7 +8,6 @@ const subtitleEl = document.getElementById("subtitle-text");
 const anchorEl = document.getElementById("anchor");
 const signCard = document.getElementById("sign-card");
 const signImg = document.getElementById("sign-img");
-const signLabel = document.getElementById("sign-label");
 
 // Reference images available on the server, e.g. {"A": "A.png"}.
 let signImages = {};
@@ -28,7 +27,6 @@ function showSignCard(s) {
   shownSign = s.prediction;
   signImg.src = `/signs/${encodeURIComponent(file)}`;
   signImg.alt = `Znak ${s.prediction}`;
-  signLabel.textContent = s.prediction;
   signCard.hidden = false;
 }
 
