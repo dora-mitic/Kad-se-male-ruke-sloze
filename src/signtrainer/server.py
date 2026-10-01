@@ -4,17 +4,30 @@ import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
+from signtrainer import config
 from signtrainer.capture import CameraWorker
+from signtrainer.images import trim_to_content
 
 WEB_DIR = Path(__file__).parent / "web"
 
 
-def create_app(camera_index: int = 0) -> FastAPI:
+def sign_images() -> dict[str, str]:
+    """Map each label to its reference image file name, e.g. {"A": "A.png"}."""
+    found = {}
+    for path in sorted(config.SIGN_ASSETS_DIR.glob("*")):
+        if path.suffix.lower() in config.SIGN_EXTENSIONS:
+            found.setdefault(path.stem.upper(), path.name)
+    return found
+
+
+def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
+    """Build the web app. `recorder_factory(worker)` enables the /record page."""
     worker = CameraWorker(camera_index)
+    recorder = recorder_factory(worker) if recorder_factory else None
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -24,6 +37,29 @@ def create_app(camera_index: int = 0) -> FastAPI:
 
     app = FastAPI(lifespan=lifespan)
     app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+    config.SIGN_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    trimmed: dict[tuple[str, float], bytes] = {}  # (name, mtime) -> trimmed PNG
+
+    @app.get("/signs/{name}")
+    def sign_image(name: str):
+        if name not in sign_images().values():
+            raise HTTPException(404)
+        path = config.SIGN_ASSETS_DIR / name
+        if path.suffix.lower() not in (".png", ".jpg", ".jpeg", ".webp"):
+            return FileResponse(path)  # GIF/SVG: served as-is (animation, vectors)
+        key = (name, path.stat().st_mtime)
+        if key not in trimmed:
+            trimmed[key] = trim_to_content(path.read_bytes())
+        return Response(trimmed[key], media_type="image/png")
+
+    @app.middleware("http")
+    async def revalidate_pages(request, call_next):
+        # Without this, browsers reuse an old style.css/app.js for hours after an
+        # update. "no-cache" still allows caching but checks the ETag every time.
+        response = await call_next(request)
+        if request.url.path == "/" or request.url.path.startswith(("/static", "/record", "/signs")):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
 
     @app.get("/")
     def index():
@@ -44,6 +80,11 @@ def create_app(camera_index: int = 0) -> FastAPI:
 
         return StreamingResponse(frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
+    @app.get("/api/signs")
+    def signs():
+        # Rescanned on every call, so new images show up without a restart.
+        return sign_images()
+
     @app.get("/api/state")
     def state():
         snap = worker.snapshot()
@@ -52,7 +93,36 @@ def create_app(camera_index: int = 0) -> FastAPI:
             "camera_ready": snap.jpeg is not None,
             "hand_detected": snap.landmarks is not None,
             "handedness": snap.handedness,
+            "body_detected": snap.pose is not None,
+            "near_anchor": snap.near_anchor,
+            "model_loaded": snap.model_loaded,
+            "prediction": snap.prediction,
+            "confidence": round(snap.confidence, 3),
             "fps": round(snap.fps, 1),
         }
+
+    if recorder is not None:
+
+        @app.get("/record")
+        def record_page():
+            return FileResponse(WEB_DIR / "record.html")
+
+        @app.get("/api/record/config")
+        def record_config():
+            return {"labels": recorder.labels, "rounds": recorder.rounds, **recorder.meta}
+
+        @app.get("/api/record/status")
+        def record_status():
+            return recorder.status()
+
+        @app.post("/api/record/start/{label}")
+        def record_start(label: str):
+            if label not in recorder.labels:
+                raise HTTPException(400, f"unknown label {label}")
+            return {"started": recorder.start(label)}
+
+        @app.post("/api/record/undo")
+        def record_undo():
+            return {"deleted": recorder.delete_last()}
 
     return app

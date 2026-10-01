@@ -5,11 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kad se male ruke slože</title>
   <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/theme.js"></script>
+  <script src="/static/bg.js"></script>
 </head>
 <body>
   <header>
     <h1>Kad se male ruke slože</h1>
-    <div id="status" class="pill pill-wait">Pokrećem kameru…</div>
+    <div class="header-right">
+      <div id="anchor" class="pill pill-anchor" hidden></div>
+      <div id="status" class="pill pill-wait">Pokrećem kameru…</div>
+      <button id="theme-toggle" class="theme-toggle" type="button"></button>
+    </div>
   </header>
 
   <main>
@@ -19,8 +25,8 @@
       <div id="message" class="message" hidden></div>
 
       <!-- Reference sign preview (M8): PNG/GIF of the last recognised sign -->
-      <aside id="sign-card" class="sign-card">
-        <div class="sign-placeholder">znak</div>
+      <aside id="sign-card" class="sign-card" hidden>
+        <img id="sign-img" alt="">
       </aside>
 
       <!-- Live subtitles (M3/M7) -->

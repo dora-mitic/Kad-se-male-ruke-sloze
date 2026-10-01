@@ -1,0 +1,98 @@
+{
+  "A": {
+    "images": 3000,
+    "hands_found": 2182
+  },
+  "B": {
+    "images": 3000,
+    "hands_found": 2202
+  },
+  "C": {
+    "images": 3000,
+    "hands_found": 1962
+  },
+  "D": {
+    "images": 3000,
+    "hands_found": 2457
+  },
+  "E": {
+    "images": 3000,
+    "hands_found": 2307
+  },
+  "F": {
+    "images": 3000,
+    "hands_found": 2864
+  },
+  "G": {
+    "images": 3000,
+    "hands_found": 2428
+  },
+  "H": {
+    "images": 3000,
+    "hands_found": 2373
+  },
+  "I": {
+    "images": 3000,
+    "hands_found": 2379
+  },
+  "K": {
+    "images": 3000,
+    "hands_found": 2699
+  },
+  "L": {
+    "images": 3000,
+    "hands_found": 2521
+  },
+  "M": {
+    "images": 3000,
+    "hands_found": 1603
+  },
+  "N": {
+    "images": 3000,
+    "hands_found": 1275
+  },
+  "O": {
+    "images": 3000,
+    "hands_found": 2258
+  },
+  "P": {
+    "images": 3000,
+    "hands_found": 2040
+  },
+  "Q": {
+    "images": 3000,
+    "hands_found": 2118
+  },
+  "R": {
+    "images": 3000,
+    "hands_found": 2545
+  },
+  "S": {
+    "images": 3000,
+    "hands_found": 2555
+  },
+  "T": {
+    "images": 3000,
+    "hands_found": 2354
+  },
+  "U": {
+    "images": 3000,
+    "hands_found": 2509
+  },
+  "V": {
+    "images": 3000,
+    "hands_found": 2548
+  },
+  "W": {
+    "images": 3000,
+    "hands_found": 2453
+  },
+  "X": {
+    "images": 3000,
+    "hands_found": 2156
+  },
+  "Y": {
+    "images": 3000,
+    "hands_found": 2580
+  }
+}

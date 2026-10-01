@@ -19,3 +19,12 @@ data/
 .idea/
 Thumbs.db
 desktop.ini
+
+# Trained models (trained partly on GPL-2.0 data; decide on publishing later)
+*.joblib
+
+# Reference material (dictionaries, PDFs); usually copyrighted, keep local
+references/
+
+# Sign images: keep local until each licence is checked and listed in ASSETS.md
+assets/signs/

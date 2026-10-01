@@ -4,6 +4,54 @@ const statusEl = document.getElementById("status");
 const messageEl = document.getElementById("message");
 const fpsEl = document.getElementById("fps");
 const videoEl = document.getElementById("video");
+const subtitleEl = document.getElementById("subtitle-text");
+const anchorEl = document.getElementById("anchor");
+const signCard = document.getElementById("sign-card");
+const signImg = document.getElementById("sign-img");
+
+// Reference images available on the server, e.g. {"A": "A.png"}.
+let signImages = {};
+async function loadSignImages() {
+  try { signImages = await (await fetch("/api/signs")).json(); } catch {}
+}
+loadSignImages();
+setInterval(loadSignImages, 5000);
+
+// Show the last confidently recognised sign; it stays until a new one appears,
+// so the card doesn't flicker on every uncertain frame.
+let shownSign = null;
+function showSignCard(s) {
+  if (!s.hand_detected || !s.prediction || s.confidence < 0.6) return;
+  const file = signImages[s.prediction];
+  if (!file || s.prediction === shownSign) return;
+  shownSign = s.prediction;
+  signImg.src = `/signs/${encodeURIComponent(file)}`;
+  signImg.alt = `Znak ${s.prediction}`;
+  signCard.hidden = false;
+}
+
+const ANCHOR_LABELS = { forehead: "Ruka kod čela", chin: "Ruka kod brade", chest: "Ruka kod prsa" };
+
+function showAnchor(s) {
+  const label = ANCHOR_LABELS[s.near_anchor];
+  anchorEl.hidden = !label;
+  if (label) anchorEl.textContent = `📍 ${label}`;
+}
+
+// Until M3 adds smoothing and hold-to-confirm, the subtitle shows the raw guess.
+function showPrediction(s) {
+  if (!s.model_loaded) {
+    subtitleEl.className = "subtitle-placeholder";
+    subtitleEl.textContent = "Model još nije istreniran";
+  } else if (!s.hand_detected || !s.prediction) {
+    subtitleEl.className = "subtitle-placeholder";
+    subtitleEl.textContent = "Pokaži slovo…";
+  } else {
+    const pct = Math.round(s.confidence * 100);
+    subtitleEl.className = s.confidence >= 0.6 ? "guess" : "guess guess-unsure";
+    subtitleEl.innerHTML = `${s.prediction}<small>${pct} %</small>`;
+  }
+}
 
 const ERRORS = {
   camera_unavailable: "Kamera nije dostupna. Provjeri je li spojena i koristi li je neki drugi program.",
@@ -37,6 +85,9 @@ async function poll() {
       setStatus("Pokaži ruku kameri", "wait");
       showMessage("");
     }
+    showPrediction(s);
+    showSignCard(s);
+    showAnchor(s);
     fpsEl.textContent = s.fps ? `${Math.round(s.fps)} FPS` : "";
   } catch {
     setStatus("Server ne radi", "bad");
