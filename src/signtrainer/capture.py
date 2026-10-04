@@ -11,6 +11,7 @@ from mediapipe.tasks.python import BaseOptions, vision
 
 from signtrainer import body, config
 from signtrainer.model import LETTERS_MODEL_PATH, LetterClassifier
+from signtrainer.motion import MOTION_MODEL_PATH, MotionTracker
 
 HAND_CONNECTIONS = [(c.start, c.end) for c in vision.HandLandmarksConnections.HAND_CONNECTIONS]
 FINGERTIPS = {4, 8, 12, 16, 20}
@@ -26,7 +27,7 @@ class HandFrame:
     handedness: str | None = None
     pose: np.ndarray | None = None  # (33, 3) body landmarks in pixel units, or None
     near_anchor: str | None = None  # "forehead" / "chin" / "chest" if a fingertip is there
-    prediction: str | None = None  # raw per-frame guess, no smoothing yet
+    prediction: str | None = None  # raw per-frame guess (or J/Z right after a stroke)
     confidence: float = 0.0
     model_loaded: bool = False
     fps: float = 0.0
@@ -140,6 +141,7 @@ class CameraWorker(threading.Thread):
 
         # The letter model is optional: without it the UI still shows the hand.
         classifier = LetterClassifier() if LETTERS_MODEL_PATH.exists() else None
+        motion = MotionTracker() if MOTION_MODEL_PATH.exists() else None  # J and Z
         pose_landmarker = load_pose_landmarker()
 
         # DirectShow opens much faster than the default backend on Windows.
@@ -194,6 +196,11 @@ class CameraWorker(threading.Thread):
                     draw_hand(frame, pts)
                     if classifier is not None:
                         prediction, confidence = classifier.predict(pts, handedness)
+                if motion is not None:
+                    # A just-drawn J or Z wins over the per-frame guess (which says I or D).
+                    stroke = motion.push(pts, handedness, time.monotonic())
+                    if stroke is not None:
+                        prediction, confidence = stroke
 
                 now = time.monotonic()
                 fps = 0.9 * fps + 0.1 * (1.0 / max(now - prev, 1e-6))

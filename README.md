@@ -3,7 +3,8 @@
 A real-time, webcam-based trainer for **American Sign Language (ASL)**. You sign in
 front of a normal laptop webcam and the app shows what you signed as live subtitles:
 
-- **Fingerspelling:** letters A to Z (J and Z, which involve motion, come later).
+- **Fingerspelling:** letters A to Z. J and Z are drawn in the air, so they are
+  recognised from a short window of frames instead of a single frame.
 - **Phrase signs:** a small, fixed set of common signs such as HELLO, THANK YOU,
   I LOVE YOU and GOODBYE.
 - **Subtitles:** each recognised letter or sign appears at the bottom of the screen;
@@ -28,7 +29,7 @@ Built for Smotra Sveučilišta u Zagrebu, representing FER.
 | M3 Real-time recognition and subtitle bar | planned |
 | M4 Visitor experience | planned |
 | M5 Robustness and fair readiness | planned |
-| M6 Dynamic signs (J, Z, phrase signs) | planned |
+| M6 Dynamic signs (J, Z, phrase signs) | in progress (J and Z done, see `reports/motion_eval.md`) |
 | M7 Subtitles and phrases | planned |
 | M8 Reference sign preview | planned |
 
