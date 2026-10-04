@@ -3,6 +3,7 @@
 const $ = (id) => document.getElementById(id);
 let labels = [], rounds = 1, step = 0, busy = false, handVisible = false;
 
+const MOTION = "JZ"; // letters drawn in the air: one stroke per clip, not a held pose
 const total = () => labels.length * rounds;
 const current = () => labels[step % labels.length];
 
@@ -30,7 +31,9 @@ async function record() {
   for (const n of [3, 2, 1]) { cd.textContent = n; await sleep(700); }
   cd.hidden = true;
 
-  render("Snimam… drži znak i lagano miči ruku (bliže, dalje, zakreni)");
+  render(MOTION.includes(current())
+    ? `Snimam… nacrtaj ${current()} jednom, pa zadrži ruku na kraju`
+    : "Snimam… drži znak i lagano miči ruku (bliže, dalje, zakreni)");
   await fetch(`/api/record/start/${current()}`, { method: "POST" });
   await sleep(300);
   let s;

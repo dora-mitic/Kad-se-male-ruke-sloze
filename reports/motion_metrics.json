@@ -1,0 +1,148 @@
+{
+  "best": "logreg",
+  "classes": [
+    "J",
+    "Z",
+    "none"
+  ],
+  "people": [
+    "p01"
+  ],
+  "skipped": [
+    "p01/s02/Z_1",
+    "p01/s02/Z_2"
+  ],
+  "models": {
+    "logreg": {
+      "window_accuracy": 0.9924749163879598,
+      "confusion": [
+        [
+          124,
+          0,
+          6
+        ],
+        [
+          0,
+          110,
+          2
+        ],
+        [
+          1,
+          0,
+          953
+        ]
+      ],
+      "detection": 0.9210526315789473,
+      "detected": {
+        "J": {
+          "hits": 18,
+          "clips": 20
+        },
+        "Z": {
+          "hits": 17,
+          "clips": 18
+        }
+      },
+      "false_alarm_rate": 0.0,
+      "static_clips": 72,
+      "false_alarms": [],
+      "wrong_letter": [],
+      "missed": [
+        "p01/s02/Z_13",
+        "p01/s02/J_5",
+        "p01/s02/J_11"
+      ],
+      "score": 0.9605263157894737
+    },
+    "random_forest": {
+      "window_accuracy": 0.9908026755852842,
+      "confusion": [
+        [
+          125,
+          0,
+          5
+        ],
+        [
+          2,
+          108,
+          2
+        ],
+        [
+          2,
+          0,
+          952
+        ]
+      ],
+      "detection": 0.8157894736842105,
+      "detected": {
+        "J": {
+          "hits": 17,
+          "clips": 20
+        },
+        "Z": {
+          "hits": 14,
+          "clips": 18
+        }
+      },
+      "false_alarm_rate": 0.0,
+      "static_clips": 72,
+      "false_alarms": [],
+      "wrong_letter": [],
+      "missed": [
+        "p01/s02/Z_13",
+        "p01/s02/Z_14",
+        "p01/s02/J_5",
+        "p01/s02/Z_3",
+        "p01/s02/Z_5",
+        "p01/s02/J_19",
+        "p01/s02/J_11"
+      ],
+      "score": 0.9078947368421053
+    },
+    "mlp": {
+      "window_accuracy": 0.9732441471571907,
+      "confusion": [
+        [
+          116,
+          2,
+          12
+        ],
+        [
+          7,
+          98,
+          7
+        ],
+        [
+          4,
+          0,
+          950
+        ]
+      ],
+      "detection": 0.8421052631578947,
+      "detected": {
+        "J": {
+          "hits": 16,
+          "clips": 20
+        },
+        "Z": {
+          "hits": 16,
+          "clips": 18
+        }
+      },
+      "false_alarm_rate": 0.0,
+      "static_clips": 72,
+      "false_alarms": [],
+      "wrong_letter": [
+        "p01/s02/J_3 -> Z"
+      ],
+      "missed": [
+        "p01/s02/Z_13",
+        "p01/s02/J_5",
+        "p01/s02/J_7",
+        "p01/s02/Z_3",
+        "p01/s02/J_11"
+      ],
+      "score": 0.9210526315789473
+    }
+  }
+}

@@ -1,40 +1,59 @@
-/* "Med" (honey) palette: off-white background, gold as the main colour, warm
-   near-black text. Subtitles are gold on a dark box so they read from 2 m away.
+/* "Med" (honey) theme: gold is the dominant colour (solid gold header, gold frame,
+   gold subtitles), warm near-black for text and accents, a warm off-white page.
    Light is the default; the header button switches to dark. */
 :root {
-  --bg: #FFFDF8;
+  --bg: #FFF9EB;
   --panel: #2A2118;
   --text: #2A2118;
   --muted: #7D6E5D;
   --gold: #EBA800;
+  --gold-bright: #FFC21A;
   --on-gold: #2A2118;
-  --subtitle-text: #F2B530;
-  --subtitle-bg: rgba(42, 33, 24, 0.9);
-  --card-bg: rgba(255, 253, 248, 0.9);
-  --overlay-bg: rgba(255, 253, 248, 0.94);
+  --header-bg: var(--gold);
+  --header-text: #2A2118;
+  --surface: #FFFDF6;
+  --subtitle-text: #FFC21A;
+  --subtitle-bg: rgba(42, 33, 24, 0.92);
+  --overlay-bg: rgba(255, 249, 235, 0.94);
   --bad: #C62828;
   --shadow: rgba(42, 33, 24, 0.18);
-  --pattern-fine: rgba(42, 33, 24, 0.09);
-  --pattern-major: rgba(235, 168, 0, 0.32);
-  --topo-line: rgba(204, 140, 0, 0.45);
+  --offset-shadow: #2A2118;
+  /* background confetti (confetti.js) */
+  --pattern-line: rgba(214, 150, 0, 0.42);
+  --pattern-strong: rgba(214, 150, 0, 0.62);
 }
 
 :root[data-theme="dark"] {
-  --bg: #16120D;
-  --panel: #221C15;
+  --bg: #17120B;
+  --panel: #241C12;
   --text: #F7EBD8;
   --muted: #B5A38A;
   --gold: #F2B530;
-  --on-gold: #16120D;
-  --subtitle-text: #F2B530;
-  --subtitle-bg: rgba(14, 11, 7, 0.9);
-  --card-bg: rgba(14, 11, 7, 0.75);
-  --overlay-bg: rgba(22, 18, 13, 0.93);
+  --gold-bright: #FFC933;
+  --on-gold: #17120B;
+  --header-bg: var(--gold);
+  --header-text: #17120B;
+  --surface: #241C12;
+  --subtitle-text: #FFC933;
+  --subtitle-bg: rgba(12, 9, 5, 0.92);
+  --overlay-bg: rgba(23, 18, 11, 0.93);
   --bad: #FF6B5B;
   --shadow: rgba(0, 0, 0, 0.5);
-  --pattern-fine: rgba(247, 235, 216, 0.06);
-  --pattern-major: rgba(242, 181, 48, 0.20);
-  --topo-line: rgba(242, 181, 48, 0.28);
+  --offset-shadow: rgba(242, 181, 48, 0.35);
+  --pattern-line: rgba(242, 181, 48, 0.26);
+  --pattern-strong: rgba(242, 181, 48, 0.42);
+}
+
+/* Fonts are bundled (SIL OFL, see web/fonts/OFL-*.txt) so the app works offline.
+   Fredoka has no č/ć/đ; the browser draws those few letters in Nunito instead. */
+@font-face { font-family: "Nunito"; src: url("/static/fonts/Nunito.ttf") format("truetype"); font-weight: 200 1000; font-display: swap; }
+@font-face { font-family: "Fredoka"; src: url("/static/fonts/Fredoka.ttf") format("truetype"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Quicksand"; src: url("/static/fonts/Quicksand.ttf") format("truetype"); font-weight: 300 700; font-display: swap; }
+
+:root {
+  --font-display: "Fredoka", "Nunito", "Segoe UI", sans-serif;  /* titles, big letters */
+  --font-body: "Nunito", "Segoe UI", sans-serif;                /* subtitles, text */
+  --font-small: "Quicksand", "Nunito", "Segoe UI", sans-serif;  /* hints, labels, pills */
 }
 
 * { box-sizing: border-box; }
@@ -43,26 +62,18 @@ html, body {
   height: 100%;
   margin: 0;
   color: var(--text);
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font-body);
 }
 
-/* Background colour lives on <html> only, so the pattern layer can sit
-   between it and the page content. */
-html { background: var(--bg); transition: background 0.2s; }
+/* Background colour lives on <html>; the confetti canvas sits between it and
+   the page content. */
+html {
+  background-color: var(--bg);
+  transition: background-color 0.2s;
+}
 body { background: transparent; }
 
-/* Background patterns, chosen with ?bg=paper|topo|none (see bg.js) */
-html[data-bg="paper"] {
-  background-image:
-    linear-gradient(var(--pattern-fine) 1px, transparent 1px),
-    linear-gradient(90deg, var(--pattern-fine) 1px, transparent 1px),
-    linear-gradient(var(--pattern-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--pattern-major) 1px, transparent 1px);
-  background-size: 14px 14px, 14px 14px, 70px 70px, 70px 70px;
-  background-attachment: fixed;
-}
-
-#bg-topo {
+#bg-canvas {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -70,30 +81,50 @@ html[data-bg="paper"] {
   z-index: -1;
   pointer-events: none;
 }
+#bg-canvas[hidden] { display: none; }
 
 body {
   display: grid;
   grid-template-rows: auto 1fr auto;
 }
 
+/* ---- header ---------------------------------------------------------- */
+
 header, footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
+  padding: 12px 28px;
 }
 
 header {
-  border-bottom: 3px solid var(--gold);
-  background: var(--overlay-bg);
+  background: var(--header-bg);
+  color: var(--header-text);
+  box-shadow: 0 4px 0 var(--panel);
+  position: relative;
+  z-index: 1;
+}
+
+.brand { display: flex; align-items: center; gap: 14px; }
+
+.logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  background: var(--panel);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
 }
 
 h1 {
   margin: 0;
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  color: var(--text);
+  color: var(--header-text);
 }
 
 .header-right { display: flex; align-items: center; gap: 12px; }
@@ -102,38 +133,37 @@ h1 {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 2px solid var(--gold);
+  border: 2px solid var(--header-text);
   background: transparent;
-  color: var(--text);
-  font-size: 1.3rem;
+  color: var(--header-text);
+  font-size: 1.2rem;
   cursor: pointer;
 }
-.theme-toggle:hover { background: var(--gold); color: var(--on-gold); }
-
-footer {
-  color: var(--muted);
-  font-size: 1.1rem;
-}
+.theme-toggle:hover { background: var(--panel); color: var(--gold); }
 
 .pill {
+  font-family: var(--font-small);
   padding: 8px 18px;
   border-radius: 999px;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: background 0.2s;
 }
-.pill-ok   { background: var(--gold); color: var(--on-gold); }
-.pill-wait { background: transparent; color: var(--text); box-shadow: inset 0 0 0 2px var(--gold); }
-.pill-bad  { background: var(--bad); color: #fff; }
-.pill-anchor { background: var(--panel); color: var(--gold); }
+/* Pills sit on the gold header, so they use the dark colour for contrast. */
+.pill-ok     { background: var(--panel); color: var(--gold-bright); }
+.pill-wait   { background: transparent; color: var(--header-text); box-shadow: inset 0 0 0 2px var(--header-text); }
+.pill-bad    { background: var(--bad); color: #fff; }
+.pill-anchor { background: #FFFFFF; color: #2A2118; }
 .pill[hidden] { display: none; }
+
+/* ---- main area: camera stage ----------------------------------------- */
 
 main {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 0;
-  padding: 20px 56px;
+  padding: 24px 40px;
 }
 
 .stage {
@@ -142,10 +172,12 @@ main {
   max-height: calc(100vh - 190px);
   aspect-ratio: 16 / 9;
   max-width: 100%;
+  min-width: 0;
   background: var(--panel);
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 0 0 3px var(--gold), 0 20px 60px var(--shadow);
+  border: 5px solid var(--gold);
+  box-shadow: 12px 12px 0 var(--offset-shadow);
 }
 
 #video {
@@ -169,6 +201,25 @@ main {
 }
 .message[hidden] { display: none; }
 
+/* ---- footer ----------------------------------------------------------- */
+
+footer {
+  font-family: var(--font-small);
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+.hint {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 2px solid var(--gold);
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* ---- subtitles and sign card ------------------------------------------ */
+
 /* Film-style subtitles over the bottom of the video */
 .subtitles {
   position: absolute;
@@ -177,17 +228,17 @@ main {
   transform: translateX(-50%);
   max-width: 80%;
   padding: 10px 26px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--subtitle-bg);
-  border-bottom: 3px solid var(--gold);
+  border-bottom: 4px solid var(--gold);
   box-shadow: 0 4px 16px var(--shadow);
   font-size: clamp(1.6rem, 3.2vw, 3rem);
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
   color: var(--subtitle-text);
 }
-.guess { font-size: 1.4em; }
-.guess small { font-size: 0.45em; margin-left: 0.6em; color: #D8C7AE; font-weight: 400; }
+.guess { font-family: var(--font-display); font-weight: 600; font-size: 1.4em; }
+.guess small { font-family: var(--font-small); font-size: 0.45em; margin-left: 0.6em; color: #D8C7AE; font-weight: 400; }
 .guess-unsure { opacity: 0.5; }
 .subtitle-placeholder {
   color: #B5A38A;
@@ -196,7 +247,8 @@ main {
 }
 
 /* Reference sign in the bottom-right corner, above the subtitle line.
-   White in both themes: the drawings are black lines on transparent PNGs. */
+   The drawings are black lines on transparent PNGs: white card in the light
+   theme; in the dark theme a dark card with the drawing inverted to white. */
 .sign-card {
   position: absolute;
   right: 24px;
@@ -206,8 +258,8 @@ main {
   padding: 6px;
   border-radius: 14px;
   background: #FFFFFF;
-  border: 3px solid var(--gold);
-  box-shadow: 0 6px 20px var(--shadow);
+  border: 4px solid var(--gold);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,32 +267,37 @@ main {
 }
 .sign-card[hidden] { display: none; }
 .sign-card img { width: 100%; height: 100%; object-fit: contain; }
+:root[data-theme="dark"] .sign-card { background: #0C0905; }
+:root[data-theme="dark"] .sign-card img { filter: invert(1); }
 
-/* Recording page */
-.muted { color: var(--muted); font-weight: 400; }
+/* ---- recording page --------------------------------------------------- */
+
+.muted { color: inherit; opacity: 0.7; font-weight: 400; }
 
 .target-letter {
+  font-family: var(--font-display);
   position: absolute;
   top: 20px;
   left: 28px;
   font-size: clamp(5rem, 14vw, 11rem);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1;
   color: rgba(255, 255, 255, 0.75);
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
   transition: color 0.2s;
 }
-.target-letter.hand-ok { color: var(--gold); }
+.target-letter.hand-ok { color: var(--gold-bright); }
 
 .countdown {
+  font-family: var(--font-display);
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: clamp(6rem, 20vw, 16rem);
-  font-weight: 700;
-  color: var(--gold);
+  font-weight: 800;
+  color: var(--gold-bright);
   text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
 }
 .countdown[hidden] { display: none; }
