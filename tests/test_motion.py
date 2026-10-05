@@ -15,11 +15,12 @@ def hand(offset=(0.0, 0.0), scale=1.0):
     return pts
 
 
-def stroke_clip(n=40, start=12, end=24, step=60.0):
+def stroke_clip(n=40, start=12, end=24, step=60.0, base=None):
     """Hand holds still, moves right between `start` and `end`, then holds still."""
+    base = hand() if base is None else base
     xs = np.concatenate([np.zeros(start), np.arange(1, end - start + 1) * step,
                          np.full(n - end, (end - start) * step)])
-    return np.stack([hand((x, 0)) for x in xs])
+    return np.stack([base + np.array([x, 0, 0], np.float32) for x in xs])
 
 
 def test_features_shape():
@@ -72,13 +73,14 @@ def test_clip_windows_skip_stroke_during_countdown():
 
 
 def test_tracker_fires_once_and_holds():
-    clips = [stroke_clip(), np.stack([hand()] * 40)]
+    j_hand = finger_hand({"pinky"})  # passes the J handshape check
+    clips = [stroke_clip(base=j_hand), np.stack([j_hand] * 40)]
     X = np.stack([motion.window_features(c[s:e + 1], ["Right"] * (e - s + 1))
                   for c in clips for (s, e) in [(0, 31), (8, 39)]])
     model = LogisticRegression().fit(X, ["none", "J", "none", "none"])
 
     tracker = motion.MotionTracker(model=model)
-    shown = [tracker.push(p, "Right", now=i / 18) for i, p in enumerate(stroke_clip())]
+    shown = [tracker.push(p, "Right", now=i / 18) for i, p in enumerate(stroke_clip(base=j_hand))]
     fired = [s for s in shown if s]
     assert fired and {s[0] for s in fired} == {"J"}
     assert len(tracker.points) < motion.WINDOW  # buffer was cleared after firing
@@ -95,3 +97,24 @@ def test_load_own_skips_motion_letters(tmp_path):
     clips = dataset.load_clips(tmp_path)
     assert [c["name"] for c in clips] == ["p01/s02/I_1", "p01/s02/J_1"]
     assert clips[1]["label"] == "J" and clips[1]["person"] == "p01"
+
+
+def finger_hand(up):
+    """A hand with the listed fingers straight up and the others curled at the knuckle."""
+    pts = np.zeros((21, 3), np.float32)
+    pts[motion.MIDDLE_MCP] = (0, -100, 0)
+    for name, (tip, pip) in motion.FINGERS.items():
+        pts[pip] = (0, -140, 0)
+        pts[tip] = (0, -200, 0) if name in up else (0, -110, 0)
+    return pts
+
+
+def test_handshape_check():
+    i_shape = np.stack([finger_hand({"pinky"})] * 12)
+    v_shape = np.stack([finger_hand({"index", "middle"})] * 12)
+    d_shape = np.stack([finger_hand({"index"})] * 12)
+    ily_shape = np.stack([finger_hand({"index", "pinky"})] * 12)
+    assert motion.handshape_ok("J", i_shape) and not motion.handshape_ok("Z", i_shape)
+    assert motion.handshape_ok("Z", d_shape) and not motion.handshape_ok("J", d_shape)
+    assert not motion.handshape_ok("J", v_shape) and not motion.handshape_ok("Z", v_shape)
+    assert not motion.handshape_ok("J", ily_shape)

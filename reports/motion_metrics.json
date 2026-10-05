@@ -14,12 +14,12 @@
   ],
   "models": {
     "logreg": {
-      "window_accuracy": 0.9924749163879598,
+      "window_accuracy": 0.9864763335837716,
       "confusion": [
         [
-          124,
+          119,
           0,
-          6
+          11
         ],
         [
           0,
@@ -27,15 +27,15 @@
           2
         ],
         [
-          1,
+          5,
           0,
-          953
+          1084
         ]
       ],
-      "detection": 0.9210526315789473,
+      "detection": 0.8947368421052632,
       "detected": {
         "J": {
-          "hits": 18,
+          "hits": 17,
           "clips": 20
         },
         "Z": {
@@ -44,23 +44,24 @@
         }
       },
       "false_alarm_rate": 0.0,
-      "static_clips": 72,
+      "static_clips": 87,
       "false_alarms": [],
       "wrong_letter": [],
       "missed": [
+        "p01/s02/J_11",
+        "p01/s02/J_14",
         "p01/s02/Z_13",
-        "p01/s02/J_5",
-        "p01/s02/J_11"
+        "p01/s02/J_5"
       ],
-      "score": 0.9605263157894737
+      "score": 0.9473684210526316
     },
     "random_forest": {
-      "window_accuracy": 0.9908026755852842,
+      "window_accuracy": 0.9894815927873779,
       "confusion": [
         [
-          125,
+          124,
           0,
-          5
+          6
         ],
         [
           2,
@@ -69,14 +70,14 @@
         ],
         [
           2,
-          0,
-          952
+          2,
+          1085
         ]
       ],
-      "detection": 0.8157894736842105,
+      "detection": 0.7368421052631579,
       "detected": {
         "J": {
-          "hits": 17,
+          "hits": 14,
           "clips": 20
         },
         "Z": {
@@ -85,43 +86,46 @@
         }
       },
       "false_alarm_rate": 0.0,
-      "static_clips": 72,
+      "static_clips": 87,
       "false_alarms": [],
       "wrong_letter": [],
       "missed": [
-        "p01/s02/Z_13",
         "p01/s02/Z_14",
-        "p01/s02/J_5",
+        "p01/s02/J_11",
+        "p01/s02/J_14",
         "p01/s02/Z_3",
-        "p01/s02/Z_5",
+        "p01/s02/J_6",
+        "p01/s02/Z_13",
         "p01/s02/J_19",
-        "p01/s02/J_11"
+        "p01/s02/J_5",
+        "p01/s02/J_7",
+        "p01/s02/Z_5"
       ],
-      "score": 0.9078947368421053
+      "score": 0.868421052631579
     },
     "mlp": {
-      "window_accuracy": 0.9732441471571907,
+      "window_accuracy": 0.9759579263711495,
       "confusion": [
         [
-          116,
-          2,
-          12
+          112,
+          0,
+          18
         ],
         [
-          7,
-          98,
+          0,
+          105,
           7
         ],
         [
-          4,
+          7,
           0,
-          950
+          1082
         ]
       ],
-      "detection": 0.8421052631578947,
+      "detection": 0.868421052631579,
       "detected": {
         "J": {
-          "hits": 16,
+          "hits": 17,
           "clips": 20
         },
         "Z": {
@@ -130,19 +134,17 @@
         }
       },
       "false_alarm_rate": 0.0,
-      "static_clips": 72,
+      "static_clips": 87,
       "false_alarms": [],
-      "wrong_letter": [
-        "p01/s02/J_3 -> Z"
-      ],
+      "wrong_letter": [],
       "missed": [
-        "p01/s02/Z_13",
-        "p01/s02/J_5",
-        "p01/s02/J_7",
+        "p01/s02/J_11",
         "p01/s02/Z_3",
-        "p01/s02/J_11"
+        "p01/s02/J_8",
+        "p01/s02/Z_13",
+        "p01/s02/J_5"
       ],
-      "score": 0.9210526315789473
+      "score": 0.9342105263157895
     }
   }
 }
