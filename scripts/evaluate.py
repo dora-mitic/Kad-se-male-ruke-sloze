@@ -7,6 +7,10 @@ Split:
     That is NOT person-independent (same signer in train and test) and the report
     says so in bold; it is only a sanity check of the pipeline.
 
+Signs that only the held-out person recorded (e.g. ILY, so far only p01) can't be
+tested in that fold: the model never saw them. They are left out of the score and
+listed as untested, instead of counting as 0%.
+
 After evaluation, the best model is retrained on all data and saved to
 models/letters.joblib. Results go to reports/.
 
@@ -51,15 +55,21 @@ def main() -> None:
     if not person_independent:
         print("WARNING: no own recordings, evaluating on Kaggle itself (not person-independent).")
 
+    # Labels with no training data when a person is held out can't be scored in that fold.
+    untested = sorted({str(c) for _, test in folds for c in np.unique(y[test]) if c not in set(y[~test])})
+    if untested:
+        print(f"Not testable on a held-out person (nobody else recorded them): {untested}")
+
     results = {}
     for name, model in candidates().items():
         y_true, y_pred, per_fold = [], [], {}
         t = time.time()
         for fold_name, test in folds:
             m = clone(model).fit(X[~test], y[~test])
-            pred = m.predict(X[test])
-            per_fold[fold_name] = float(np.mean(pred == y[test]))
-            y_true.append(y[test])
+            scored = test & np.isin(y, m.classes_)
+            pred = m.predict(X[scored])
+            per_fold[fold_name] = float(np.mean(pred == y[scored]))
+            y_true.append(y[scored])
             y_pred.append(pred)
         y_true, y_pred = np.concatenate(y_true), np.concatenate(y_pred)
         cm = confusion_matrix(y_true, y_pred, labels=classes)
@@ -78,14 +88,15 @@ def main() -> None:
     print(f"\nBest: {best}. Retraining on all data -> {LETTERS_MODEL_PATH}")
     save(clone(candidates()[best]).fit(X, y))
 
-    write_reports(results, best, classes, data, person_independent)
+    write_reports(results, best, classes, data, person_independent, untested)
 
 
-def write_reports(results, best, classes, data, person_independent) -> None:
+def write_reports(results, best, classes, data, person_independent, untested) -> None:
     out = config.REPORTS_DIR
     out.mkdir(exist_ok=True)
     (out / "letters_metrics.json").write_text(json.dumps(
-        {"best": best, "classes": classes, "person_independent": person_independent, "models": results},
+        {"best": best, "classes": classes, "person_independent": person_independent,
+         "untested": untested, "models": results},
         indent=2,
     ))
 
@@ -104,6 +115,11 @@ def write_reports(results, best, classes, data, person_independent) -> None:
         ),
         "",
         "Data: " + ", ".join(f"{p} ({c} samples)" for p, c in zip(people, counts)),
+    ]
+    if untested:
+        lines += ["", f"Not tested (only the held-out person recorded them, so they are left out of the "
+                      f"score; the final model does include them): {', '.join(untested)}"]
+    lines += [
         "",
         "## Models",
         "",
