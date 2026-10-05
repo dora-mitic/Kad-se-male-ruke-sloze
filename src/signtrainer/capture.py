@@ -12,6 +12,7 @@ from mediapipe.tasks.python import BaseOptions, vision
 from signtrainer import body, config
 from signtrainer.model import LETTERS_MODEL_PATH, LetterClassifier
 from signtrainer.motion import MOTION_MODEL_PATH, MotionTracker
+from signtrainer.subtitles import HoldToConfirm
 
 HAND_CONNECTIONS = [(c.start, c.end) for c in vision.HandLandmarksConnections.HAND_CONNECTIONS]
 FINGERTIPS = {4, 8, 12, 16, 20}
@@ -29,6 +30,9 @@ class HandFrame:
     near_anchor: str | None = None  # "forehead" / "chin" / "chest" if a fingertip is there
     prediction: str | None = None  # raw per-frame guess (or J/Z right after a stroke)
     confidence: float = 0.0
+    subtitle: str = ""  # confirmed letters
+    candidate: str | None = None  # letter being held, not yet confirmed
+    progress: float = 0.0  # 0..1 towards confirming the candidate
     model_loaded: bool = False
     fps: float = 0.0
     error: str | None = None
@@ -118,6 +122,7 @@ class CameraWorker(threading.Thread):
         super().__init__(daemon=True)
         self.camera_index = camera_index
         self.state = HandFrame()
+        self.subtitles = HoldToConfirm()  # also edited by the web server (delete, space)
         self.lock = threading.Lock()
         self._stop_event = threading.Event()
 
@@ -196,11 +201,16 @@ class CameraWorker(threading.Thread):
                     draw_hand(frame, pts)
                     if classifier is not None:
                         prediction, confidence = classifier.predict(pts, handedness)
+                static, static_conf = prediction, confidence
+                fired = None
+                now = time.monotonic()
                 if motion is not None:
                     # A just-drawn J or Z wins over the per-frame guess (which says I or D).
-                    stroke = motion.push(pts, handedness, time.monotonic())
+                    stroke = motion.push(pts, handedness, now)
                     if stroke is not None:
                         prediction, confidence = stroke
+                        fired = stroke[0] if motion.just_fired else None
+                sub = self.subtitles.update(now, pts is not None, static, static_conf, fired)
 
                 now = time.monotonic()
                 fps = 0.9 * fps + 0.1 * (1.0 / max(now - prev, 1e-6))
@@ -217,6 +227,9 @@ class CameraWorker(threading.Thread):
                     near_anchor=near,
                     prediction=prediction,
                     confidence=confidence,
+                    subtitle=sub.text,
+                    candidate=sub.candidate,
+                    progress=sub.progress,
                     model_loaded=classifier is not None,
                     fps=fps,
                     error=None,

@@ -40,6 +40,16 @@ CAMERA_INDEX = 0
 CAMERA_WIDTH = 1280
 CAMERA_HEIGHT = 720
 
+# Subtitles (hold-to-confirm, see subtitles.py)
+CONFIRM_SECONDS = 0.8  # hold a letter this long to write it
+MIN_CONFIDENCE = 0.5  # guesses below this don't count
+GRACE_SECONDS = 0.25  # flickers shorter than this don't break the hold
+SPACE_SECONDS = 1.5  # hand away this long ends the word
+CLEAR_SECONDS = 8.0  # hand away this long clears the text
+SUBTITLE_MAX_CHARS = 24
+# Signs written into the subtitle as a symbol instead of their label.
+SUBTITLE_SYMBOLS = {"ILY": "❤️"}  # "I love you"
+
 # Local web UI
 HOST = "127.0.0.1"
 PORT = 8000
