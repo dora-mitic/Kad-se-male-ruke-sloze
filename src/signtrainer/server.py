@@ -85,6 +85,15 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
         # Rescanned on every call, so new images show up without a restart.
         return sign_images()
 
+    @app.post("/api/subtitle/{action}")
+    def edit_subtitle(action: str):
+        edits = {"backspace": worker.subtitles.backspace, "space": worker.subtitles.space,
+                 "clear": worker.subtitles.clear}
+        if action not in edits:
+            raise HTTPException(400, f"unknown action {action}")
+        edits[action]()
+        return {"text": worker.subtitles.text}
+
     @app.get("/api/state")
     def state():
         snap = worker.snapshot()
@@ -98,6 +107,9 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
             "model_loaded": snap.model_loaded,
             "prediction": snap.prediction,
             "confidence": round(snap.confidence, 3),
+            "subtitle": snap.subtitle,
+            "candidate": snap.candidate,
+            "progress": round(snap.progress, 2),
             "fps": round(snap.fps, 1),
         }
 

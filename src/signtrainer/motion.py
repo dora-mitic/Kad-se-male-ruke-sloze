@@ -7,6 +7,10 @@ average handshape. It answers "J", "Z" or "none".
 
 Frames without a hand are simply not in the window (the recorder skips them too),
 so training clips and the live buffer are built the same way.
+
+On top of the model, a simple handshape check guards against false alarms from a
+hand moving into another letter (e.g. V was read as J): J needs the pinky up and
+index and middle down, Z needs only the index up.
 """
 
 from collections import Counter, deque
@@ -27,6 +31,16 @@ MIN_FRAMES = 10  # shorter windows are not classified
 RESAMPLE = 16  # every path is resampled to this many points
 TRACKED = (WRIST, 8, 20)  # wrist, index tip (Z), pinky tip (J)
 NUM_FEATURES = len(TRACKED) * RESAMPLE * 2 + 63
+
+# Fingertip and middle joint (PIP) of each finger; a finger is "up" if its tip is
+# clearly farther from the wrist than its middle joint.
+FINGERS = {"index": (8, 6), "middle": (12, 10), "ring": (16, 14), "pinky": (20, 18)}
+EXTENDED_RATIO = 1.1
+# Which fingers must be up (True) or down (False) during the stroke.
+SHAPES = {
+    "J": {"pinky": True, "index": False, "middle": False},
+    "Z": {"index": True, "middle": False, "pinky": False},
+}
 
 # Speed (hand lengths per frame) above which a frame counts as part of a stroke.
 STROKE_SPEED = 0.15
@@ -65,6 +79,23 @@ def window_features(points, handedness) -> np.ndarray:
 
     shape = np.mean([normalize_landmarks(p, hand) for p in pts], axis=0)
     return np.concatenate([resampled.reshape(-1), shape]).astype(np.float32)
+
+
+def fingers_up(points) -> dict[str, float]:
+    """Fraction of frames in which each finger is up."""
+    pts = np.asarray(points, dtype=np.float32)
+    wrist = pts[:, WRIST]
+    return {
+        name: float(np.mean(np.linalg.norm(pts[:, tip] - wrist, axis=1)
+                            > EXTENDED_RATIO * np.linalg.norm(pts[:, pip] - wrist, axis=1)))
+        for name, (tip, pip) in FINGERS.items()
+    }
+
+
+def handshape_ok(label: str, points) -> bool:
+    """Whether the window's handshape fits the motion letter (most frames, per finger)."""
+    up = fingers_up(points)
+    return all((up[f] >= 0.5) == want for f, want in SHAPES[label].items())
 
 
 def speeds(points) -> np.ndarray:
@@ -150,6 +181,7 @@ class MotionTracker:
         self.streak = 0
         self.shown: tuple[str, float] | None = None
         self.shown_until = 0.0
+        self.just_fired = False  # True only on the frame a letter fires
 
     def reset(self) -> None:
         self.points.clear()
@@ -158,6 +190,7 @@ class MotionTracker:
 
     def push(self, points, handedness, now: float) -> tuple[str, float] | None:
         """Add one frame (points None = no hand). Returns (letter, confidence) while one is shown."""
+        self.just_fired = False
         if points is None:
             self.missing += 1
             if self.missing > self.MAX_MISSING:
@@ -175,14 +208,16 @@ class MotionTracker:
     def _classify(self, now: float) -> None:
         if len(self.points) < MIN_FRAMES:
             return
-        x = window_features(np.stack(self.points), list(self.hands))[None, :]
+        window = np.stack(self.points)
+        x = window_features(window, list(self.hands))[None, :]
         proba = self.model.predict_proba(x)[0]
         i = int(np.argmax(proba))
         label, conf = self.classes[i], float(proba[i])
-        if label == NONE or conf < self.THRESHOLD:
+        if label == NONE or conf < self.THRESHOLD or not handshape_ok(label, window):
             self.streak = 0
             return
         self.streak += 1
         if self.streak >= self.TRIGGER_FRAMES:
             self.shown, self.shown_until = (label, conf), now + self.HOLD_SECONDS
+            self.just_fired = True
             self.reset()

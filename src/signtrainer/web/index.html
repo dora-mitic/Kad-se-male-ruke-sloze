@@ -32,9 +32,22 @@
         <img id="sign-img" alt="">
       </aside>
 
-      <!-- Live subtitles (M3/M7) -->
-      <div class="subtitles">
-        <span id="subtitle-text" class="subtitle-placeholder">Ovdje će se pojaviti titlovi</span>
+      <!-- Live subtitles (M3/M7): the letter being read above, confirmed text below -->
+      <div class="subtitle-area">
+        <div id="reading" class="reading" hidden>
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="ring-track" cx="50" cy="50" r="44"></circle>
+            <circle id="ring" class="ring-fill" cx="50" cy="50" r="44"></circle>
+          </svg>
+          <span id="reading-letter"></span>
+        </div>
+        <div class="subtitle-row">
+          <div class="subtitles">
+            <span id="subtitle-text" class="subtitle-placeholder">Ovdje će se pojaviti titlovi</span>
+          </div>
+          <button class="sub-btn" type="button" data-edit="space" title="Razmak (razmaknica)">razmak</button>
+          <button class="sub-btn" type="button" data-edit="backspace" title="Obriši zadnje slovo (Backspace)">⌫</button>
+        </div>
       </div>
     </div>
   </main>
