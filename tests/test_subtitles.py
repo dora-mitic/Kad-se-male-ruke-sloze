@@ -134,3 +134,14 @@ def test_deleting_the_auto_space_sticks():
     _, t = feed(sub, t, 0.5, "B")  # hand back: the next absence adds a space again
     state, _ = feed(sub, t, 2.0, None, hand=False)
     assert state.text == "A "
+
+
+def test_phrase_is_written_as_a_word():
+    sub = HoldToConfirm(words={"HELLO": "ZDRAVO"})
+    _, t = feed(sub, 0.0, 1.2, "A")
+    state = sub.update(t, True, "B", 0.9, motion_letter="HELLO")
+    assert state.text == "A ZDRAVO "
+    state, t = feed(sub, t + 0.05, 2.0, "B")  # flat hand after HELLO is not written as B
+    assert state.text == "A ZDRAVO "
+    sub.backspace()  # the whole word goes at once
+    assert sub.text == "A "
