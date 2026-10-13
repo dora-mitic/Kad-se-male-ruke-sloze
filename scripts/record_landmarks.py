@@ -5,6 +5,7 @@ Opens a page that shows each letter in turn; press SPACE to record a short clip.
 Usage:
     python scripts/record_landmarks.py --person p01 --session s01 --lighting "dnevno"
     python scripts/record_landmarks.py --person p01 --session s03 --labels ILY --rounds 15
+    python scripts/record_landmarks.py --person p01 --session s05 --labels HELLO --rounds 15 --seconds 3
 
 --labels is a string of single letters ("ABC"), or comma-separated labels when a
 sign has a longer name ("ILY" or "ILY,A").
@@ -21,7 +22,7 @@ from signtrainer.recorder import ClipRecorder
 from signtrainer.server import create_app
 
 STATIC_LETTERS = [c for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" if c not in "JZ"]
-MULTI_CHAR_SIGNS = {"ILY"}  # "I love you" handshape
+MULTI_CHAR_SIGNS = {"ILY"} | set(config.PHRASE_WORDS)  # "ILY" is the "I love you" handshape
 
 
 def parse_labels(text: str) -> list[str]:

@@ -12,6 +12,7 @@ from mediapipe.tasks.python import BaseOptions, vision
 from signtrainer import body, config
 from signtrainer.model import LETTERS_MODEL_PATH, LetterClassifier
 from signtrainer.motion import MOTION_MODEL_PATH, MotionTracker
+from signtrainer.phrases import PHRASE_MODEL_PATH, PhraseTracker
 from signtrainer.subtitles import HoldToConfirm
 
 HAND_CONNECTIONS = [(c.start, c.end) for c in vision.HandLandmarksConnections.HAND_CONNECTIONS]
@@ -147,6 +148,7 @@ class CameraWorker(threading.Thread):
         # The letter model is optional: without it the UI still shows the hand.
         classifier = LetterClassifier() if LETTERS_MODEL_PATH.exists() else None
         motion = MotionTracker() if MOTION_MODEL_PATH.exists() else None  # J and Z
+        phrases = PhraseTracker() if PHRASE_MODEL_PATH.exists() else None  # HELLO, THANK YOU, ...
         pose_landmarker = load_pose_landmarker()
 
         # DirectShow opens much faster than the default backend on Windows.
@@ -210,6 +212,12 @@ class CameraWorker(threading.Thread):
                     if stroke is not None:
                         prediction, confidence = stroke
                         fired = stroke[0] if motion.just_fired else None
+                if phrases is not None:
+                    phrase = phrases.push(pts, handedness, pose, now)
+                    if phrase is not None:
+                        prediction, confidence = phrase
+                        if phrases.just_fired:
+                            fired = phrase[0]
                 sub = self.subtitles.update(now, pts is not None, static, static_conf, fired)
 
                 now = time.monotonic()

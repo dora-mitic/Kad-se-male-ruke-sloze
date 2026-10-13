@@ -29,7 +29,7 @@ Built for Smotra Sveučilišta u Zagrebu, representing FER.
 | M3 Real-time recognition and subtitle bar | in progress (hold-to-confirm subtitles done) |
 | M4 Visitor experience | planned |
 | M5 Robustness and fair readiness | planned |
-| M6 Dynamic signs (J, Z, phrase signs) | in progress (J and Z done, see `reports/motion_eval.md`) |
+| M6 Dynamic signs (J, Z, phrase signs) | in progress (J and Z done; HELLO and THANK YOU recognised, more phrases coming; see `reports/motion_eval.md`, `reports/phrases_eval.md`) |
 | M7 Subtitles and phrases | planned |
 | M8 Reference sign preview | planned |
 

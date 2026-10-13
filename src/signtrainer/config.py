@@ -49,6 +49,14 @@ CLEAR_SECONDS = 8.0  # hand away this long clears the text
 SUBTITLE_MAX_CHARS = 24
 # Signs written into the subtitle as a symbol instead of their label.
 SUBTITLE_SYMBOLS = {"ILY": "❤️"}  # "I love you"
+# Phrase signs (phrases.py) and the Croatian word written into the subtitle.
+PHRASE_WORDS = {
+    "HELLO": "ZDRAVO",
+    "THANKYOU": "HVALA",
+    "GOODBYE": "DOVIĐENJA",
+    "PLEASE": "MOLIM",
+    "SORRY": "OPROSTI",
+}
 
 # Local web UI
 HOST = "127.0.0.1"

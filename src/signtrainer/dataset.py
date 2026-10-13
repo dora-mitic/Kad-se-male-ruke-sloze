@@ -41,10 +41,11 @@ def clip_label(clip: Path) -> str:
     return clip.stem.rsplit("_", 1)[0]
 
 
-def load_own(root: Path = OWN_DIR, exclude=MOTION_LABELS) -> dict:
+def load_own(root: Path = OWN_DIR, exclude=MOTION_LABELS + tuple(config.PHRASE_WORDS)) -> dict:
     """Read every clip in data/own/<person>/<session>/<label>_<n>.npz, frame by frame.
 
-    Motion letters are left out by default: a single frame of J or Z is not the letter.
+    Motion letters and phrases are left out by default: a single frame of J or HELLO
+    is not the sign.
     """
     parts = []
     for clip in sorted(root.glob("*/*/*.npz")):
@@ -65,7 +66,8 @@ def load_own(root: Path = OWN_DIR, exclude=MOTION_LABELS) -> dict:
 def load_clips(root: Path = OWN_DIR) -> list[dict]:
     """Every own clip as a whole sequence, for the motion model.
 
-    Each item: points (T, 21, 3), handedness (T,), label, person, name ("p01/s02/J_3").
+    Each item: points (T, 21, 3), handedness (T,), pose (T, 33, 3) or None for old
+    clips, label, person, name ("p01/s02/J_3").
     """
     clips = []
     for clip in sorted(root.glob("*/*/*.npz")):
@@ -73,6 +75,7 @@ def load_clips(root: Path = OWN_DIR) -> list[dict]:
         clips.append({
             "points": data["points"],
             "handedness": data["handedness"],
+            "pose": data["pose"] if "pose" in data.files else None,
             "label": clip_label(clip),
             "person": clip.parent.parent.name,
             "name": clip.relative_to(root).with_suffix("").as_posix(),

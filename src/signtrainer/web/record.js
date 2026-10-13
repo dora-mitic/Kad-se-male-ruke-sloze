@@ -4,6 +4,7 @@ const $ = (id) => document.getElementById(id);
 let labels = [], rounds = 1, step = 0, busy = false, handVisible = false;
 
 const MOTION = "JZ"; // letters drawn in the air: one stroke per clip, not a held pose
+const PHRASES = ["HELLO", "THANKYOU", "GOODBYE", "PLEASE", "SORRY"]; // whole-word signs with movement
 const total = () => labels.length * rounds;
 const current = () => labels[step % labels.length];
 
@@ -31,7 +32,9 @@ async function record() {
   for (const n of [3, 2, 1]) { cd.textContent = n; await sleep(700); }
   cd.hidden = true;
 
-  render(MOTION.includes(current())
+  render(PHRASES.includes(current())
+    ? `Snimam… napravi ${current()} jednom, pa spusti ruku`
+    : MOTION.includes(current())
     ? `Snimam… nacrtaj ${current()} jednom, pa zadrži ruku na kraju`
     : "Snimam… drži znak i lagano miči ruku (bliže, dalje, zakreni)");
   await fetch(`/api/record/start/${current()}`, { method: "POST" });

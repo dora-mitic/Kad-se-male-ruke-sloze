@@ -13,6 +13,8 @@ clears the text (the next visitor starts fresh). The UI can also edit the text
 (delete a letter, add a space, clear) from the web server's thread.
 
 Some signs are written as a symbol, e.g. "I love you" as a heart (config.SUBTITLE_SYMBOLS).
+Phrase signs (HELLO, ...) are written at once like J/Z, as a whole Croatian word
+(config.PHRASE_WORDS) with spaces around it; backspace deletes such a word in one go.
 """
 
 import threading
@@ -38,7 +40,8 @@ class HoldToConfirm:
                  space_seconds: float = config.SPACE_SECONDS,
                  clear_seconds: float = config.CLEAR_SECONDS,
                  max_chars: int = config.SUBTITLE_MAX_CHARS,
-                 symbols: dict | None = None):
+                 symbols: dict | None = None,
+                 words: dict | None = None):
         self.confirm_seconds = confirm_seconds
         self.min_confidence = min_confidence
         self.grace_seconds = grace_seconds
@@ -46,6 +49,7 @@ class HoldToConfirm:
         self.clear_seconds = clear_seconds
         self.max_chars = max_chars
         self.symbols = config.SUBTITLE_SYMBOLS if symbols is None else symbols
+        self.words = config.PHRASE_WORDS if words is None else words
 
         self.text = ""
         self.candidate: str | None = None
@@ -63,13 +67,17 @@ class HoldToConfirm:
         Args:
             hand: whether a hand is visible.
             letter, confidence: the per-frame static guess.
-            motion_letter: J or Z on the one frame the motion model fires (else None).
+            motion_letter: J, Z or a phrase on the one frame its model fires (else None).
         """
         with self._lock:
             return self._update(now, hand, letter, confidence, motion_letter)
 
     def backspace(self) -> None:
         with self._lock:
+            for word in self.words.values():
+                if self.text.endswith(word + " "):
+                    self.text = self.text.removesuffix(word + " ")
+                    return
             self.text = self.text.removesuffix(VARIATION_SELECTOR)[:-1]
 
     def space(self) -> None:
@@ -125,7 +133,11 @@ class HoldToConfirm:
         return SubtitleState(self.text, shown, progress)
 
     def _write(self, label: str) -> None:
-        text = self.text + self.symbols.get(label, label)
+        if label in self.words:
+            gap = " " if self.text and not self.text.endswith(" ") else ""
+            text = self.text + gap + self.words[label] + " "
+        else:
+            text = self.text + self.symbols.get(label, label)
         self.text = text[-self.max_chars:].removeprefix(VARIATION_SELECTOR)
 
     def _hand_gone(self, now: float) -> None:
