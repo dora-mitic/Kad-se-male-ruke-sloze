@@ -5,68 +5,92 @@
     "THANKYOU"
   ],
   "people": [
-    "p01"
+    "p01",
+    "p02"
   ],
   "models": {
     "logreg": {
-      "window_accuracy": 0.98691226369365,
+      "window_accuracy": 0.9911463187325257,
       "detected": {
         "HELLO": {
-          "hits": 15,
-          "clips": 15
+          "hits": 18,
+          "clips": 21
         },
         "THANKYOU": {
-          "hits": 15,
-          "clips": 15
+          "hits": 19,
+          "clips": 23
         }
       },
-      "detection": 1.0,
-      "false_alarm_rate": 0.014598540145985401,
-      "other_clips": 137,
+      "detection": 0.8409090909090909,
+      "false_alarm_rate": 0.006666666666666667,
+      "other_clips": 150,
       "false_alarms": [
-        "p01/s01/H_2 -> HELLO",
         "p01/s01/O_2 -> HELLO"
       ],
-      "problems": [],
-      "score": 0.9927007299270073
+      "problems": [
+        "p02/s03/HELLO_5 -> nothing",
+        "p02/s03/HELLO_2 -> nothing",
+        "p02/s03/HELLO_3 -> nothing",
+        "p02/s03/THANKYOU_1 -> nothing",
+        "p02/s03/THANKYOU_10 -> nothing",
+        "p02/s03/THANKYOU_2 -> nothing",
+        "p02/s03/THANKYOU_4 -> nothing"
+      ],
+      "score": 0.9171212121212121
     },
     "random_forest": {
-      "window_accuracy": 0.998061076102763,
+      "window_accuracy": 0.9962721342031687,
       "detected": {
         "HELLO": {
-          "hits": 15,
-          "clips": 15
+          "hits": 18,
+          "clips": 21
         },
         "THANKYOU": {
-          "hits": 15,
-          "clips": 15
+          "hits": 19,
+          "clips": 23
         }
       },
-      "detection": 1.0,
+      "detection": 0.8409090909090909,
       "false_alarm_rate": 0.0,
-      "other_clips": 137,
+      "other_clips": 150,
       "false_alarms": [],
-      "problems": [],
-      "score": 1.0
+      "problems": [
+        "p02/s03/HELLO_5 -> nothing",
+        "p02/s03/HELLO_2 -> nothing",
+        "p02/s03/HELLO_3 -> nothing",
+        "p02/s03/THANKYOU_1 -> nothing",
+        "p02/s03/THANKYOU_10 -> nothing",
+        "p02/s03/THANKYOU_2 -> nothing",
+        "p02/s03/THANKYOU_4 -> nothing"
+      ],
+      "score": 0.9204545454545454
     },
     "mlp": {
-      "window_accuracy": 0.9825496849248667,
+      "window_accuracy": 0.9855545200372786,
       "detected": {
         "HELLO": {
-          "hits": 15,
-          "clips": 15
+          "hits": 18,
+          "clips": 21
         },
         "THANKYOU": {
-          "hits": 15,
-          "clips": 15
+          "hits": 19,
+          "clips": 23
         }
       },
-      "detection": 1.0,
+      "detection": 0.8409090909090909,
       "false_alarm_rate": 0.0,
-      "other_clips": 137,
+      "other_clips": 150,
       "false_alarms": [],
-      "problems": [],
-      "score": 1.0
+      "problems": [
+        "p02/s03/HELLO_5 -> nothing",
+        "p02/s03/HELLO_2 -> nothing",
+        "p02/s03/HELLO_3 -> nothing",
+        "p02/s03/THANKYOU_1 -> nothing",
+        "p02/s03/THANKYOU_10 -> nothing",
+        "p02/s03/THANKYOU_2 -> nothing",
+        "p02/s03/THANKYOU_4 -> nothing"
+      ],
+      "score": 0.9204545454545454
     }
   }
 }

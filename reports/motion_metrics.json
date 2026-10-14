@@ -6,7 +6,8 @@
     "none"
   ],
   "people": [
-    "p01"
+    "p01",
+    "p02"
   ],
   "skipped": [
     "p01/s02/Z_1",
@@ -14,137 +15,145 @@
   ],
   "models": {
     "logreg": {
-      "window_accuracy": 0.9864763335837716,
+      "window_accuracy": 0.9881178707224335,
       "confusion": [
         [
-          119,
+          151,
           0,
-          11
+          17
         ],
         [
           0,
-          110,
+          130,
           2
         ],
         [
           5,
-          0,
-          1084
+          1,
+          1798
         ]
       ],
-      "detection": 0.8947368421052632,
+      "detection": 0.9310344827586207,
       "detected": {
         "J": {
-          "hits": 17,
-          "clips": 20
+          "hits": 27,
+          "clips": 30
         },
         "Z": {
-          "hits": 17,
-          "clips": 18
+          "hits": 27,
+          "clips": 28
         }
       },
       "false_alarm_rate": 0.0,
-      "static_clips": 87,
+      "static_clips": 178,
       "false_alarms": [],
       "wrong_letter": [],
       "missed": [
-        "p01/s02/J_11",
         "p01/s02/J_14",
         "p01/s02/Z_13",
+        "p01/s02/J_11",
         "p01/s02/J_5"
       ],
-      "score": 0.9473684210526316
+      "score": 0.9655172413793103
     },
     "random_forest": {
-      "window_accuracy": 0.9894815927873779,
+      "window_accuracy": 0.9938212927756654,
       "confusion": [
         [
-          124,
+          163,
           0,
-          6
+          5
         ],
         [
-          2,
-          108,
-          2
+          0,
+          127,
+          5
         ],
         [
+          1,
           2,
-          2,
-          1085
+          1801
         ]
       ],
-      "detection": 0.7368421052631579,
+      "detection": 0.7586206896551724,
       "detected": {
         "J": {
-          "hits": 14,
-          "clips": 20
+          "hits": 25,
+          "clips": 30
         },
         "Z": {
-          "hits": 14,
-          "clips": 18
+          "hits": 19,
+          "clips": 28
         }
       },
       "false_alarm_rate": 0.0,
-      "static_clips": 87,
+      "static_clips": 178,
       "false_alarms": [],
       "wrong_letter": [],
       "missed": [
-        "p01/s02/Z_14",
-        "p01/s02/J_11",
+        "p01/s02/Z_5",
+        "p02/s02/J_2",
+        "p02/s02/Z_3",
         "p01/s02/J_14",
-        "p01/s02/Z_3",
-        "p01/s02/J_6",
         "p01/s02/Z_13",
-        "p01/s02/J_19",
+        "p01/s02/Z_14",
+        "p02/s02/Z_5",
+        "p01/s02/J_11",
+        "p01/s02/J_8",
+        "p01/s02/Z_3",
         "p01/s02/J_5",
-        "p01/s02/J_7",
-        "p01/s02/Z_5"
+        "p02/s02/Z_1",
+        "p01/s02/Z_6",
+        "p02/s02/Z_7"
       ],
-      "score": 0.868421052631579
+      "score": 0.8793103448275862
     },
     "mlp": {
-      "window_accuracy": 0.9759579263711495,
+      "window_accuracy": 0.9866920152091255,
       "confusion": [
         [
-          112,
+          152,
           0,
-          18
+          16
         ],
         [
           0,
-          105,
+          125,
           7
         ],
         [
-          7,
-          0,
-          1082
+          3,
+          2,
+          1799
         ]
       ],
-      "detection": 0.868421052631579,
+      "detection": 0.8448275862068966,
       "detected": {
         "J": {
-          "hits": 17,
-          "clips": 20
+          "hits": 25,
+          "clips": 30
         },
         "Z": {
-          "hits": 16,
-          "clips": 18
+          "hits": 24,
+          "clips": 28
         }
       },
       "false_alarm_rate": 0.0,
-      "static_clips": 87,
+      "static_clips": 178,
       "false_alarms": [],
       "wrong_letter": [],
       "missed": [
-        "p01/s02/J_11",
-        "p01/s02/Z_3",
-        "p01/s02/J_8",
+        "p02/s02/J_2",
+        "p02/s02/Z_3",
         "p01/s02/Z_13",
+        "p01/s02/J_11",
+        "p01/s02/J_7",
+        "p01/s02/J_8",
+        "p01/s02/Z_3",
+        "p02/s02/Z_4",
         "p01/s02/J_5"
       ],
-      "score": 0.9342105263157895
+      "score": 0.9224137931034483
     }
   }
 }

@@ -1,19 +1,19 @@
 # Motion letters (J, Z): evaluation
 
-Generated 2026-10-04 20:48 by `scripts/evaluate_motion.py`.
+Generated 2026-10-14 18:27 by `scripts/evaluate_motion.py`.
 
-Split: 5-fold, grouped by clip. J/Z recorded by: p01. **Only one person, so this is NOT person-independent; expect worse results for other people.**
+Split: 5-fold, grouped by clip. J/Z recorded by: p01, p02.
 
-Data: 125 clips, windows: J 130, Z 112, none 1089. Skipped (no stroke recorded): p01/s02/Z_1, p01/s02/Z_2
+Data: 236 clips, windows: J 168, Z 132, none 1804. Skipped (no stroke recorded): p01/s02/Z_1, p01/s02/Z_2
 
 Live simulation: each held-out clip is played through the app's tracker. Detected = exactly
 the right letter fired; false alarm = J or Z fired on a static-letter clip.
 
 | Model | Window accuracy | J detected | Z detected | False alarms |
 |---|---|---|---|---|
-| logreg (best) | 0.986 | 17/20 | 17/18 | 0/87 |
-| random_forest | 0.989 | 14/20 | 14/18 | 0/87 |
-| mlp | 0.976 | 17/20 | 16/18 | 0/87 |
+| logreg (best) | 0.988 | 27/30 | 27/28 | 0/178 |
+| random_forest | 0.994 | 25/30 | 19/28 | 0/178 |
+| mlp | 0.987 | 25/30 | 24/28 | 0/178 |
 
 ## Window confusion (logreg)
 
@@ -21,12 +21,12 @@ Rows: true, columns: predicted.
 
 | | J | Z | none |
 |---|---|---|---|
-| **J** | 119 | 0 | 11 |
-| **Z** | 0 | 110 | 2 |
-| **none** | 5 | 0 | 1084 |
+| **J** | 151 | 0 | 17 |
+| **Z** | 0 | 130 | 2 |
+| **none** | 5 | 1 | 1798 |
 
 ## Problem clips (logreg)
 
-- Missed: p01/s02/J_11, p01/s02/J_14, p01/s02/Z_13, p01/s02/J_5
+- Missed: p01/s02/J_14, p01/s02/Z_13, p01/s02/J_11, p01/s02/J_5
 - Wrong letter: none
 - False alarms: none
