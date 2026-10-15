@@ -72,25 +72,32 @@ class ClipRecorder:
         return self.dir / f"{label}_{n}.npz"
 
     def _record(self, label: str) -> None:
+        path, n_frames = None, 0
+        try:
+            path, n_frames = self._record_clip(label)
+        finally:  # even if recording failed, let the page record again
+            with self._lock:
+                self._recording = False
+                self._last_saved = path
+                self._last_frames = n_frames
+
+    def _record_clip(self, label: str) -> tuple[Path | None, int]:
+        frames = self.worker.listen()  # the camera thread appends every frame
+        try:
+            time.sleep(self.clip_seconds)
+        finally:
+            self.worker.unlisten(frames)
+
         points, handedness, poses = [], [], []
-        last_id = -1
-        end = time.monotonic() + self.clip_seconds
-        while time.monotonic() < end:
-            snap = self.worker.snapshot()
-            if snap.frame_id != last_id:
-                last_id = snap.frame_id
-                if snap.landmarks is not None:  # skip frames without a hand
-                    points.append(snap.landmarks)
-                    handedness.append(snap.handedness)
-                    poses.append(snap.pose if snap.pose is not None else np.full((33, 3), np.nan, np.float32))
-            time.sleep(0.005)
+        for snap in frames:
+            if snap.landmarks is not None:  # skip frames without a hand
+                points.append(snap.landmarks)
+                handedness.append(snap.handedness)
+                poses.append(snap.pose if snap.pose is not None else np.full((33, 3), np.nan, np.float32))
 
         path = None
         if points:
             path = self._next_path(label)
             np.savez_compressed(path, points=np.stack(points), handedness=np.array(handedness),
                                 pose=np.stack(poses))
-        with self._lock:
-            self._recording = False
-            self._last_saved = path
-            self._last_frames = len(points)
+        return path, len(points)
