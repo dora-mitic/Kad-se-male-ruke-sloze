@@ -9,16 +9,29 @@ from signtrainer.recorder import ClipRecorder
 
 
 class FakeWorker:
-    """Produces a new frame every few ms; the hand is visible only when `hand` is set."""
+    """Hands every listener a few frames; the hand is visible only when `hand` is set."""
 
     def __init__(self, hand=True):
         self.hand = hand
         self.frame_id = 0
+        self.listening = 0
 
-    def snapshot(self):
+    def frame(self):
         self.frame_id += 1
         pts = np.full((21, 3), self.frame_id, dtype=np.float32) if self.hand else None
         return HandFrame(frame_id=self.frame_id, landmarks=pts, handedness="Right" if self.hand else None)
+
+    def listen(self):
+        self.listening += 1
+        return [self.frame() for _ in range(5)]
+
+    def unlisten(self, frames):
+        self.listening -= 1
+
+
+class BrokenWorker(FakeWorker):
+    def listen(self):
+        raise RuntimeError("camera gone")
 
 
 def make(tmp_path, monkeypatch, worker):
@@ -67,6 +80,21 @@ def test_no_file_without_hand(tmp_path, monkeypatch):
     wait(rec)
     assert rec.status() == {"recording": False, "last_frames": 0, "last_file": None}
     assert not list((tmp_path / "p01" / "s01").glob("*.npz"))
+
+
+def test_stops_listening_after_clip(tmp_path, monkeypatch):
+    worker = FakeWorker()
+    rec = make(tmp_path, monkeypatch, worker)
+    rec.start("A")
+    wait(rec)
+    assert worker.listening == 0 and rec.status()["last_frames"] == 5
+
+
+def test_failed_clip_does_not_block_recording(tmp_path, monkeypatch):
+    rec = make(tmp_path, monkeypatch, BrokenWorker())
+    rec.start("A")
+    wait(rec)  # would hang if the error left the recorder "recording"
+    assert rec.status()["last_file"] is None
 
 
 def test_cannot_start_twice(tmp_path, monkeypatch):

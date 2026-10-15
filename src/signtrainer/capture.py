@@ -126,10 +126,26 @@ class CameraWorker(threading.Thread):
         self.subtitles = HoldToConfirm()  # also edited by the web server (delete, space)
         self.lock = threading.Lock()
         self._stop_event = threading.Event()
+        self._listeners: list[list[HandFrame]] = []
 
     def snapshot(self) -> HandFrame:
         with self.lock:
             return self.state
+
+    def listen(self) -> list[HandFrame]:
+        """Start collecting every new frame into the returned list (see unlisten).
+
+        Polling snapshot() can miss frames: Windows stretches short sleeps in
+        background processes, so a 5 ms poll could wake only every ~150 ms.
+        """
+        frames: list[HandFrame] = []
+        with self.lock:
+            self._listeners.append(frames)
+        return frames
+
+    def unlisten(self, frames: list[HandFrame]) -> None:
+        with self.lock:
+            self._listeners.remove(frames)
 
     def stop(self) -> None:
         self._stop_event.set()
@@ -137,6 +153,9 @@ class CameraWorker(threading.Thread):
     def _publish(self, **changes) -> None:
         with self.lock:
             self.state = HandFrame(**{**self.state.__dict__, **changes, "timestamp": time.time()})
+            if "frame_id" in changes:
+                for frames in self._listeners:
+                    frames.append(self.state)
 
     def run(self) -> None:
         try:
