@@ -1,96 +1,139 @@
 {
-  "best": "random_forest",
+  "best": "mlp",
   "phrases": [
     "HELLO",
     "THANKYOU"
   ],
   "people": [
     "p01",
-    "p02"
+    "p02",
+    "p03",
+    "p04",
+    "p05"
   ],
   "models": {
     "logreg": {
-      "window_accuracy": 0.9911463187325257,
+      "window_accuracy": 0.976530887510116,
       "detected": {
         "HELLO": {
-          "hits": 18,
-          "clips": 21
+          "hits": 32,
+          "clips": 39
         },
         "THANKYOU": {
-          "hits": 19,
-          "clips": 23
+          "hits": 26,
+          "clips": 38
         }
       },
-      "detection": 0.8409090909090909,
-      "false_alarm_rate": 0.006666666666666667,
-      "other_clips": 150,
+      "detection": 0.7532467532467533,
+      "false_alarm_rate": 0.015772870662460567,
+      "other_clips": 317,
       "false_alarms": [
-        "p01/s01/O_2 -> HELLO"
+        "p01/s01/B_3 -> HELLO",
+        "p04/s01/Y_2 -> THANKYOU",
+        "p04/s02/J_6 -> THANKYOU",
+        "p01/s01/O_2 -> HELLO",
+        "p04/s01/Y_3 -> THANKYOU"
       ],
       "problems": [
-        "p02/s03/HELLO_5 -> nothing",
         "p02/s03/HELLO_2 -> nothing",
-        "p02/s03/HELLO_3 -> nothing",
         "p02/s03/THANKYOU_1 -> nothing",
         "p02/s03/THANKYOU_10 -> nothing",
+        "p03/s03/HELLO_3 -> nothing",
+        "p04/s03/HELLO_3 -> nothing",
+        "p02/s03/HELLO_3 -> nothing",
+        "p02/s03/THANKYOU_4 -> nothing",
+        "p03/s03/HELLO_1 -> nothing",
+        "p05/s03/THANKYOU_2 -> nothing",
+        "p01/s06/THANKYOU_14 -> HELLO/THANKYOU",
+        "p01/s06/THANKYOU_15 -> HELLO/THANKYOU",
+        "p04/s03/THANKYOU_4 -> nothing",
+        "p05/s03/THANKYOU_10 -> nothing",
+        "p01/s06/THANKYOU_4 -> HELLO/THANKYOU",
+        "p02/s03/HELLO_5 -> nothing",
+        "p03/s03/HELLO_2 -> nothing",
+        "p05/s03/THANKYOU_3 -> nothing",
         "p02/s03/THANKYOU_2 -> nothing",
-        "p02/s03/THANKYOU_4 -> nothing"
+        "p03/s03/THANKYOU_2 -> HELLO/THANKYOU"
       ],
-      "score": 0.9171212121212121
+      "score": 0.8687369412921464
     },
     "random_forest": {
-      "window_accuracy": 0.9962721342031687,
+      "window_accuracy": 0.9873212840571891,
       "detected": {
         "HELLO": {
-          "hits": 18,
-          "clips": 21
+          "hits": 30,
+          "clips": 39
         },
         "THANKYOU": {
-          "hits": 19,
-          "clips": 23
+          "hits": 28,
+          "clips": 38
         }
       },
-      "detection": 0.8409090909090909,
+      "detection": 0.7532467532467533,
       "false_alarm_rate": 0.0,
-      "other_clips": 150,
+      "other_clips": 317,
       "false_alarms": [],
       "problems": [
-        "p02/s03/HELLO_5 -> nothing",
         "p02/s03/HELLO_2 -> nothing",
-        "p02/s03/HELLO_3 -> nothing",
         "p02/s03/THANKYOU_1 -> nothing",
         "p02/s03/THANKYOU_10 -> nothing",
-        "p02/s03/THANKYOU_2 -> nothing",
-        "p02/s03/THANKYOU_4 -> nothing"
+        "p03/s03/HELLO_3 -> nothing",
+        "p04/s03/HELLO_3 -> nothing",
+        "p04/s03/THANKYOU_3 -> nothing",
+        "p02/s03/HELLO_3 -> nothing",
+        "p02/s03/THANKYOU_4 -> nothing",
+        "p03/s03/HELLO_1 -> nothing",
+        "p05/s03/HELLO_9 -> nothing",
+        "p05/s03/THANKYOU_2 -> nothing",
+        "p04/s03/HELLO_4 -> nothing",
+        "p04/s03/THANKYOU_4 -> nothing",
+        "p05/s03/THANKYOU_10 -> nothing",
+        "p02/s03/HELLO_5 -> nothing",
+        "p03/s03/HELLO_2 -> nothing",
+        "p05/s03/THANKYOU_1 -> nothing",
+        "p05/s03/THANKYOU_3 -> nothing",
+        "p02/s03/THANKYOU_2 -> nothing"
       ],
-      "score": 0.9204545454545454
+      "score": 0.8766233766233766
     },
     "mlp": {
-      "window_accuracy": 0.9855545200372786,
+      "window_accuracy": 0.984353925006744,
       "detected": {
         "HELLO": {
-          "hits": 18,
-          "clips": 21
+          "hits": 31,
+          "clips": 39
         },
         "THANKYOU": {
-          "hits": 19,
-          "clips": 23
+          "hits": 30,
+          "clips": 38
         }
       },
-      "detection": 0.8409090909090909,
-      "false_alarm_rate": 0.0,
-      "other_clips": 150,
-      "false_alarms": [],
+      "detection": 0.7922077922077922,
+      "false_alarm_rate": 0.006309148264984227,
+      "other_clips": 317,
+      "false_alarms": [
+        "p04/s01/Y_2 -> THANKYOU",
+        "p04/s02/J_6 -> THANKYOU"
+      ],
       "problems": [
-        "p02/s03/HELLO_5 -> nothing",
         "p02/s03/HELLO_2 -> nothing",
-        "p02/s03/HELLO_3 -> nothing",
         "p02/s03/THANKYOU_1 -> nothing",
         "p02/s03/THANKYOU_10 -> nothing",
-        "p02/s03/THANKYOU_2 -> nothing",
-        "p02/s03/THANKYOU_4 -> nothing"
+        "p03/s03/HELLO_3 -> nothing",
+        "p04/s03/HELLO_3 -> nothing",
+        "p02/s03/HELLO_3 -> nothing",
+        "p02/s03/THANKYOU_4 -> nothing",
+        "p03/s03/HELLO_1 -> nothing",
+        "p05/s03/THANKYOU_2 -> nothing",
+        "p04/s03/HELLO_4 -> nothing",
+        "p04/s03/THANKYOU_4 -> nothing",
+        "p05/s03/THANKYOU_10 -> nothing",
+        "p02/s03/HELLO_5 -> nothing",
+        "p03/s03/HELLO_2 -> nothing",
+        "p05/s03/THANKYOU_3 -> nothing",
+        "p02/s03/THANKYOU_2 -> nothing"
       ],
-      "score": 0.9204545454545454
+      "score": 0.892949321971404
     }
   }
 }
