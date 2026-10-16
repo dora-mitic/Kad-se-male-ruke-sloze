@@ -41,12 +41,19 @@
           </svg>
           <span id="reading-letter"></span>
         </div>
+        <!-- Buttons on both sides so the subtitle box itself stays centred -->
         <div class="subtitle-row">
+          <div class="sub-side sub-side-left">
+            <button id="lock-btn" class="sub-btn" type="button" data-edit="lock" aria-pressed="false"
+                    title="Zaključaj titlove (ne brišu se kad ruka ode)">🔓</button>
+          </div>
           <div class="subtitles">
             <span id="subtitle-text" class="subtitle-placeholder">Ovdje će se pojaviti titlovi</span>
           </div>
-          <button class="sub-btn" type="button" data-edit="space" title="Razmak (razmaknica)">razmak</button>
-          <button class="sub-btn" type="button" data-edit="backspace" title="Obriši zadnje slovo (Backspace)">⌫</button>
+          <div class="sub-side">
+            <button class="sub-btn" type="button" data-edit="space" title="Razmak (razmaknica)">razmak</button>
+            <button class="sub-btn" type="button" data-edit="backspace" title="Obriši zadnje slovo (Backspace)">⌫</button>
+          </div>
         </div>
       </div>
     </div>

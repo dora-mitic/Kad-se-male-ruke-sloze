@@ -94,12 +94,22 @@ function showSubtitle(s) {
   subtitleEl.append(caret);
 }
 
+// The lock keeps the text when the hand leaves (otherwise it clears for the next visitor).
+const lockBtn = document.getElementById("lock-btn");
+function showLock(locked) {
+  lockBtn.textContent = locked ? "🔒" : "🔓";
+  lockBtn.classList.toggle("sub-btn-on", locked);
+  lockBtn.setAttribute("aria-pressed", locked);
+  lockBtn.title = locked ? "Otključaj titlove (brišu se kad ruka ode)" : "Zaključaj titlove (ne brišu se kad ruka ode)";
+}
+
 // Editing the subtitle: buttons beside it, or the keyboard
 // (Backspace = delete a letter, Space = space, Esc = clear everything).
 async function editSubtitle(action) {
   try {
     const r = await (await fetch(`/api/subtitle/${action}`, { method: "POST" })).json();
     showSubtitle({ model_loaded: true, subtitle: r.text });
+    showLock(r.locked);
   } catch {}
 }
 document.querySelectorAll("[data-edit]").forEach((btn) =>
@@ -146,6 +156,7 @@ async function poll() {
     }
     showReading(s);
     showSubtitle(s);
+    showLock(s.subtitle_locked);
     showSignCard(s);
     showAnchor(s);
     fpsEl.textContent = s.fps ? `${Math.round(s.fps)} FPS` : "";

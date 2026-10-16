@@ -88,11 +88,11 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
     @app.post("/api/subtitle/{action}")
     def edit_subtitle(action: str):
         edits = {"backspace": worker.subtitles.backspace, "space": worker.subtitles.space,
-                 "clear": worker.subtitles.clear}
+                 "clear": worker.subtitles.clear, "lock": worker.subtitles.toggle_lock}
         if action not in edits:
             raise HTTPException(400, f"unknown action {action}")
         edits[action]()
-        return {"text": worker.subtitles.text}
+        return {"text": worker.subtitles.text, "locked": worker.subtitles.locked}
 
     @app.get("/api/state")
     def state():
@@ -108,6 +108,7 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
             "prediction": snap.prediction,
             "confidence": round(snap.confidence, 3),
             "subtitle": snap.subtitle,
+            "subtitle_locked": worker.subtitles.locked,
             "candidate": snap.candidate,
             "progress": round(snap.progress, 2),
             "fps": round(snap.fps, 1),
