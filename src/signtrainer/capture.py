@@ -1,5 +1,6 @@
 """Webcam capture with MediaPipe hand and pose tracking, running in a background thread."""
 
+import sys
 import threading
 import time
 from dataclasses import dataclass, field
@@ -170,8 +171,10 @@ class CameraWorker(threading.Thread):
         phrases = PhraseTracker() if PHRASE_MODEL_PATH.exists() else None  # HELLO, THANK YOU, ...
         pose_landmarker = load_pose_landmarker()
 
-        # DirectShow opens much faster than the default backend on Windows.
-        cap = cv2.VideoCapture(self.camera_index, cv2.CAP_DSHOW)
+        # DirectShow opens much faster than the default backend on Windows,
+        # but it only exists there, so other systems use the default backend.
+        backend = cv2.CAP_DSHOW if sys.platform == "win32" else cv2.CAP_ANY
+        cap = cv2.VideoCapture(self.camera_index, backend)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAMERA_WIDTH)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAMERA_HEIGHT)
         if not cap.isOpened():
