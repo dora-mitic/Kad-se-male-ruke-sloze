@@ -17,8 +17,26 @@
     <div class="header-right">
       <div id="anchor" class="pill pill-anchor" hidden></div>
       <div id="status" class="pill pill-wait">Pokrećem kameru…</div>
+      <button id="settings-toggle" class="theme-toggle" type="button" title="Postavke"
+              aria-expanded="false" aria-controls="settings">⚙️</button>
       <button id="theme-toggle" class="theme-toggle" type="button"></button>
     </div>
+
+    <!-- Recognition settings: hold time and confidence threshold (settings.js) -->
+    <section id="settings" class="settings" hidden>
+      <h2>Postavke</h2>
+      <label class="setting">
+        <span class="setting-head">Vrijeme držanja slova <output id="confirm-value"></output></span>
+        <input id="confirm-seconds" type="range" step="0.1">
+        <span class="setting-hint">Koliko dugo treba držati znak da se upiše.</span>
+      </label>
+      <label class="setting">
+        <span class="setting-head">Potrebna sigurnost <output id="confidence-value"></output></span>
+        <input id="min-confidence" type="range" step="0.05">
+        <span class="setting-hint">Niže = lakše prepoznaje, ali griješi češće.</span>
+      </label>
+      <button id="settings-reset" class="settings-reset" type="button">Zadano</button>
+    </section>
   </header>
 
   <main>
@@ -65,5 +83,6 @@
   </footer>
 
   <script src="/static/app.js"></script>
+  <script src="/static/settings.js"></script>
 </body>
 </html>

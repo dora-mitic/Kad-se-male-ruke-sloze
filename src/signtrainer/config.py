@@ -43,6 +43,9 @@ CAMERA_HEIGHT = 720
 # Subtitles (hold-to-confirm, see subtitles.py)
 CONFIRM_SECONDS = 0.8  # hold a letter this long to write it
 MIN_CONFIDENCE = 0.5  # guesses below this don't count
+# How far the settings panel in the web UI can move the two values above.
+CONFIRM_SECONDS_RANGE = (0.3, 3.0)
+MIN_CONFIDENCE_RANGE = (0.2, 0.95)
 GRACE_SECONDS = 0.25  # flickers shorter than this don't break the hold
 SPACE_SECONDS = 1.5  # hand away this long ends the word
 CLEAR_SECONDS = 8.0  # hand away this long clears the text

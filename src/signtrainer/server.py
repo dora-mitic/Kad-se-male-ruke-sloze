@@ -7,12 +7,20 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
 from signtrainer import config
 from signtrainer.capture import CameraWorker
 from signtrainer.images import trim_to_content
 
 WEB_DIR = Path(__file__).parent / "web"
+
+
+class Settings(BaseModel):
+    """Recognition settings the visitor can change in the web UI (not saved on restart)."""
+
+    confirm_seconds: float = Field(ge=config.CONFIRM_SECONDS_RANGE[0], le=config.CONFIRM_SECONDS_RANGE[1])
+    min_confidence: float = Field(ge=config.MIN_CONFIDENCE_RANGE[0], le=config.MIN_CONFIDENCE_RANGE[1])
 
 
 def sign_images() -> dict[str, str]:
@@ -93,6 +101,26 @@ def create_app(camera_index: int = 0, recorder_factory=None) -> FastAPI:
             raise HTTPException(400, f"unknown action {action}")
         edits[action]()
         return {"text": worker.subtitles.text, "locked": worker.subtitles.locked}
+
+    def current_settings() -> dict:
+        sub = worker.subtitles
+        return {
+            "confirm_seconds": sub.confirm_seconds,
+            "min_confidence": sub.min_confidence,
+            "defaults": {"confirm_seconds": config.CONFIRM_SECONDS,
+                         "min_confidence": config.MIN_CONFIDENCE},
+            "ranges": {"confirm_seconds": config.CONFIRM_SECONDS_RANGE,
+                       "min_confidence": config.MIN_CONFIDENCE_RANGE},
+        }
+
+    @app.get("/api/settings")
+    def get_settings():
+        return current_settings()
+
+    @app.put("/api/settings")
+    def put_settings(settings: Settings):
+        worker.subtitles.configure(settings.confirm_seconds, settings.min_confidence)
+        return current_settings()
 
     @app.get("/api/state")
     def state():

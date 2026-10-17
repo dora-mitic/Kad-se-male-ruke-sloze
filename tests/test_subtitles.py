@@ -157,3 +157,11 @@ def test_locked_text_is_not_cleared_when_the_hand_leaves():
     _, t = feed(sub, t, 0.1, None)  # hand back, then away again
     state, t = feed(sub, t, 10.0, None, hand=False)
     assert state.text == ""
+
+
+
+def test_configure_changes_hold_time_and_threshold():
+    sub = make()
+    sub.configure(confirm_seconds=0.5, min_confidence=0.3)
+    state, _ = feed(sub, 0.0, 0.6, "C", confidence=0.4)
+    assert state.text == "C"

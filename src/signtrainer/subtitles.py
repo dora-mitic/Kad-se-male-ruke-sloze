@@ -8,6 +8,9 @@ After a letter is written, the same letter can't be written again until the gues
 changes or the hand leaves. That also blocks the letter the hand still shows at the
 end of a J/Z stroke (usually I or D), so finishing a J doesn't also write an I.
 
+The hold time and the confidence threshold can be changed while the app runs
+(the settings panel in the web UI); config.py holds their defaults.
+
 The hand leaving the camera for SPACE_SECONDS ends a word; for CLEAR_SECONDS it
 clears the text (the next visitor starts fresh), unless the text is locked. The UI
 can also edit the text (delete a letter, add a space, clear) and toggle the lock
@@ -94,6 +97,12 @@ class HoldToConfirm:
     def toggle_lock(self) -> None:
         with self._lock:
             self.locked = not self.locked
+
+    def configure(self, confirm_seconds: float, min_confidence: float) -> None:
+        """Change how long a letter is held and how sure a guess must be (web UI)."""
+        with self._lock:
+            self.confirm_seconds = confirm_seconds
+            self.min_confidence = min_confidence
 
     def _update(self, now, hand, letter, confidence, motion_letter) -> SubtitleState:
         if not hand:
