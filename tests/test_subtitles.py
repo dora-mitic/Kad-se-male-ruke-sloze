@@ -145,3 +145,15 @@ def test_phrase_is_written_as_a_word():
     assert state.text == "A ZDRAVO "
     sub.backspace()  # the whole word goes at once
     assert sub.text == "A "
+
+
+def test_locked_text_is_not_cleared_when_the_hand_leaves():
+    sub = make()
+    _, t = feed(sub, 0.0, 1.2, "A")
+    sub.toggle_lock()
+    state, t = feed(sub, t, 10.0, None, hand=False)
+    assert state.text == "A "  # the word still ends, but nothing is cleared
+    sub.toggle_lock()
+    _, t = feed(sub, t, 0.1, None)  # hand back, then away again
+    state, t = feed(sub, t, 10.0, None, hand=False)
+    assert state.text == ""

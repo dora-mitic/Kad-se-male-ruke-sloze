@@ -234,22 +234,27 @@ footer {
   gap: 14px;
   pointer-events: none;
 }
+/* Equal side columns keep the subtitle box in the exact centre */
 .subtitle-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: center;
   gap: 10px;
-  max-width: 100%;
+  width: 100%;
 }
+.sub-side { display: flex; gap: 10px; }
+.sub-side-left { justify-content: flex-end; }
 .subtitles {
   min-width: 0;
   white-space: pre;
   overflow: hidden;
-  padding: 4px 20px;
+  padding: 0 18px;
+  line-height: 1.2;
   border-radius: 12px;
   background: var(--subtitle-bg);
   border-bottom: 4px solid var(--gold);
   box-shadow: 0 4px 16px var(--shadow);
-  font-size: clamp(1.2rem, 2.2vw, 2rem);
+  font-size: clamp(1rem, 1.8vw, 1.6rem);
   font-weight: 800;
   text-align: center;
   color: var(--subtitle-text);
@@ -277,6 +282,7 @@ footer {
   cursor: pointer;
 }
 .sub-btn:hover { background: var(--gold); color: var(--on-gold); }
+.sub-btn-on { box-shadow: 0 0 0 3px var(--gold), 0 4px 16px var(--shadow); }
 .subtitle-text .pop { display: inline-block; animation: pop 0.45s cubic-bezier(.2, 1.6, .4, 1); }
 @keyframes pop {
   0%   { transform: scale(1.9) translateY(-0.4em); opacity: 0.5; }

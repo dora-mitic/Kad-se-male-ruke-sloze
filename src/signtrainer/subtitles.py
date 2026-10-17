@@ -9,8 +9,9 @@ changes or the hand leaves. That also blocks the letter the hand still shows at 
 end of a J/Z stroke (usually I or D), so finishing a J doesn't also write an I.
 
 The hand leaving the camera for SPACE_SECONDS ends a word; for CLEAR_SECONDS it
-clears the text (the next visitor starts fresh). The UI can also edit the text
-(delete a letter, add a space, clear) from the web server's thread.
+clears the text (the next visitor starts fresh), unless the text is locked. The UI
+can also edit the text (delete a letter, add a space, clear) and toggle the lock
+from the web server's thread.
 
 Some signs are written as a symbol, e.g. "I love you" as a heart (config.SUBTITLE_SYMBOLS).
 Phrase signs (HELLO, ...) are written at once like J/Z, as a whole Croatian word
@@ -58,6 +59,7 @@ class HoldToConfirm:
         self.blocked: set[str] = set()  # letters that can't be written until released
         self.hand_gone_since: float | None = None
         self.auto_spaced = False  # the space for this absence was already added
+        self.locked = False  # locked text isn't cleared when the hand leaves
         self._lock = threading.Lock()  # the camera thread updates, the web server edits
 
     def update(self, now: float, hand: bool, letter: str | None, confidence: float,
@@ -88,6 +90,10 @@ class HoldToConfirm:
     def clear(self) -> None:
         with self._lock:
             self.text = ""
+
+    def toggle_lock(self) -> None:
+        with self._lock:
+            self.locked = not self.locked
 
     def _update(self, now, hand, letter, confidence, motion_letter) -> SubtitleState:
         if not hand:
@@ -148,7 +154,8 @@ class HoldToConfirm:
             return
         away = now - self.hand_gone_since
         if away >= self.clear_seconds:
-            self.text = ""
+            if not self.locked:
+                self.text = ""
         elif away >= self.space_seconds and not self.auto_spaced:
             # Only once per absence, so deleting the space with the hand away sticks.
             self.auto_spaced = True
